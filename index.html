@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OxyFelt 조건 셋업 보고서 프로그램</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<style>
+
+body{font-family:'Noto Sans KR','Malgun Gothic',sans-serif;color:#1d2530;background:#f4f5f7;margin:0;line-height:1.65}
+.wrap{max-width:960px;margin:0 auto;background:#fff;padding:28px 40px 48px}
+.bar{position:sticky;top:0;background:#fff;border-bottom:1px solid #e3e6ea;padding:10px 40px;display:flex;gap:8px;flex-wrap:wrap;z-index:5;max-width:960px;margin:0 auto;align-items:center}
+.bar button,.bar label{border:1px solid #2F6FB0;background:#fff;color:#2F6FB0;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:13px;font-family:inherit}
+.bar .p{background:#2F6FB0;color:#fff} #msg{font-size:13px;color:#2a7d3b} #src{font-size:12px;color:#667;margin-left:auto}
+header{border-bottom:3px solid #2F6FB0;padding-bottom:12px;margin-bottom:8px}
+.tag{color:#2F6FB0;font-weight:700;font-size:13px} h1{margin:4px 0;font-size:24px} .meta{color:#667;font-size:13px;margin:0}
+h2{font-size:18px;border-left:4px solid #2F6FB0;padding-left:10px;margin-top:34px}
+table{border-collapse:collapse;width:100%;font-size:13px;margin:8px 0} th,td{border:1px solid #dde1e6;padding:5px 6px;text-align:center}
+th{background:#f1f3f6} .raw td{font-size:12px;line-height:1.3} .raw small{color:#D9822B}
+td.lo{color:#b42318;font-weight:700} td.hi{color:#1f5fa6;font-weight:700} td.mid{color:#b26a00;font-weight:700} td.ok{color:#2a7d3b;font-weight:700}
+.sum td:last-child,.act td:nth-child(2),.act td:nth-child(3){text-align:left}
+figure{margin:14px 0} figcaption,.cap{font-size:12px;color:#667}
+.verdict{background:#eef4fb;border-left:5px solid #2F6FB0;padding:12px 16px;margin:10px 0 14px;font-size:14.5px;white-space:pre-line}
+.verdict b.k{display:inline-block;background:#2F6FB0;color:#fff;padding:1px 8px;border-radius:4px;margin-right:8px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px} .box{border:1px solid #dde1e6;border-radius:8px;padding:4px 14px;font-size:13.5px} .box h4{margin:10px 0 0}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:6px} .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px}
+.ch{width:100%;height:300px} .ch.s{height:270px} .ch.t{height:340px} .ch.h{height:230px}
+.auto{color:#8a6d00;font-size:11px;margin-left:6px}
+@media(max-width:700px){.wrap,.bar{padding-left:16px;padding-right:16px}.grid2,.g2,.g3{grid-template-columns:1fr}}
+@media print{.bar{display:none}.wrap{padding:0;max-width:none}body{background:#fff}section{break-inside:auto}figure{break-inside:avoid}}
+
+.caution{border:1px solid #f0c36d;background:#fff8e6;border-radius:8px;padding:6px 14px 10px;margin:12px 0;font-size:13.5px}.caution h4{margin:8px 0 4px;color:#9a6200}.caution p{margin:4px 0 8px}.caution table{background:#fff}
+
+.app{max-width:1040px;margin:0 auto;background:#fff;min-height:100vh}
+.top{position:sticky;top:0;z-index:10;background:#fff;border-bottom:1px solid #e3e6ea}
+.top1{display:flex;align-items:center;gap:10px;padding:10px 20px 6px;flex-wrap:wrap}
+.top1 h1{font-size:17px;margin:0} #ver{font-size:11px;background:#eef4fb;color:#2F6FB0;border:1px solid #c9d9ee;border-radius:10px;padding:1px 8px;cursor:pointer}
+#saved{font-size:11px;color:#889;margin-left:auto}
+.acts{display:flex;gap:6px;flex-wrap:wrap;padding:0 20px 8px}
+.acts button,.acts label{border:1px solid #2F6FB0;background:#fff;color:#2F6FB0;padding:5px 11px;border-radius:6px;cursor:pointer;font-size:12.5px;font-family:inherit}
+.acts .p{background:#2F6FB0;color:#fff} .acts .sep{width:1px;background:#dde1e6;margin:0 4px}
+.tabs{display:flex;gap:2px;padding:0 20px} .tabs button{border:0;background:none;padding:8px 14px;font-family:inherit;font-size:13.5px;color:#556;cursor:pointer;border-bottom:3px solid transparent}
+.tabs button.on{color:#2F6FB0;font-weight:700;border-bottom-color:#2F6FB0}
+.pane{padding:16px 24px 40px} .pane h3{font-size:14.5px;margin:18px 0 8px;color:#2F6FB0} .pane h3 small{color:#889;font-weight:400;margin-left:6px}
+.form{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px 14px} .form2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.pane label{display:flex;flex-direction:column;font-size:12.5px;color:#445;gap:3px} .pane label.full{margin-top:4px}
+.pane input,.pane textarea{font-family:inherit;font-size:13px;padding:6px 8px;border:1px solid #cfd5dc;border-radius:5px;background:#fffbea}
+.pane textarea{resize:vertical} .cfg input{width:100%;box-sizing:border-box}
+.hint{font-size:12px;color:#778;margin:6px 0}
+.bsel{display:flex;gap:6px;align-items:center;flex-wrap:wrap} .bsel button{border:1px solid #cfd5dc;background:#fff;padding:6px 12px;border-radius:6px;cursor:pointer;font-family:inherit}
+.bsel button.on{background:#2F6FB0;color:#fff;border-color:#2F6FB0}
+.gwrap{overflow-x:auto} table.grid{width:auto;min-width:100%} table.grid td{padding:0} table.grid th{font-size:12px;padding:4px 6px;white-space:nowrap}
+table.grid input{width:58px;border:0;border-radius:0;text-align:center;padding:6px 2px;background:#fffbea} table.grid input:focus{outline:2px solid #2F6FB0;background:#fff}
+table.grid input.bad{background:#fde2e2}
+.mini{font-size:11.5px;border:1px solid #cfd5dc;background:#fff;border-radius:5px;padding:2px 8px;cursor:pointer;margin-left:8px;font-family:inherit;color:#556}
+#pPrev{background:#f4f5f7;padding:16px 0} #pPrev .wrap{box-shadow:0 1px 4px rgba(0,0,0,.08)}
+#rep.exporting{width:960px;max-width:960px}
+#log{position:absolute;right:20px;top:46px;background:#fff;border:1px solid #dde1e6;border-radius:8px;padding:10px 14px;width:360px;font-size:12.5px;box-shadow:0 4px 14px rgba(0,0,0,.12);z-index:20}
+#busy{position:fixed;inset:0;background:rgba(255,255,255,.7);display:flex;align-items:center;justify-content:center;z-index:50;font-size:15px;color:#2F6FB0;font-weight:700}
+#msg{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#1d2530;color:#fff;padding:8px 16px;border-radius:6px;font-size:13px;z-index:60}
+#msg:empty{display:none} #upd{position:sticky;top:0;z-index:30;background:#2F6FB0;color:#fff;padding:8px 16px;font-size:13px;text-align:center} #upd button{margin-left:8px;border:0;border-radius:4px;padding:3px 10px;cursor:pointer;font-family:inherit} #busy[hidden],#log[hidden]{display:none}
+@media(max-width:700px){.form2{grid-template-columns:1fr}}
+</style></head><body>
+<div class="app">
+<div class="top"><div class="top1"><h1>OxyFelt 조건 셋업 보고서 프로그램</h1><span id="ver"></span><span id="saved"></span></div>
+<div id="log" hidden></div>
+<div class="acts"><button class="p" id="bPNG">🖼 이미지(PNG)로 저장</button><button class="p" id="bPDF">📄 PDF로 저장</button><span class="sep"></span>
+<button id="bSave">작업 파일 저장</button><label>작업 파일 열기<input type="file" id="fJson" accept=".json" hidden></label><label>엑셀 양식 불러오기<input type="file" id="fXlsx" accept=".xlsx,.xlsm" hidden></label><span class="sep"></span><button id="bEx">예시 데이터</button><button id="bNew">새로 시작</button></div>
+<div class="tabs"><button data-t="pSet">① 기본 설정</button><button data-t="pData">② 시편 데이터</button><button data-t="pText">③ 보고서 문구</button><button data-t="pPrev">④ 보고서 미리보기</button></div></div>
+<div class="pane" id="pSet" hidden></div><div class="pane" id="pData" hidden></div><div class="pane" id="pText" hidden></div>
+<div class="pane" id="pPrev" hidden><div class="wrap" id="rep"></div></div>
+</div>
+<div id="busy" hidden><span id="busyT">처리 중…</span></div><div id="msg"></div>
+<script id="def" type="application/json">{"names": ["1차", "2차"], "lots": [5, 5], "n": [10, 10], "info": {"prd": "", "date": "", "author": "", "tg": 1430, "tt": 7.6, "memo1": "", "memo2": "", "gTol": 70, "tTol": 0.4}, "data": [[[1247, 7.2], [1248, 7.1], [1227, 7.06], [1288, 7.29], [1286, 7.26], [1267, 7.21], [1205, 7.14], [1270, 7.25], [1204, 6.82], [1228, 7.03], [1239, 7.11], [1246, 7.06], [1239, 7.16], [1210, 7.25], [1247, 7.28], [1211, 6.96], [1220, 7.06], [1249, 7.17], [1217, 6.95], [1214, 7.2], [1176, 6.99], [1213, 6.87], [1201, 7.18], [1140, 6.83], [1197, 6.91], [1215, 7.05], [1156, 7.01], [1220, 7.18], [1243, 7.17], [1204, 6.87], [1238, 7.04], [1206, 6.88], [1191, 6.93], [1259, 6.92], [1176, 6.99], [1263, 7.25], [1163, 6.63], [1231, 7.01], [1186, 7.1], [1253, 7.17], [1302, 7.33], [1343, 7.45], [1311, 7.36], [1248, 7.29], [1324, 7.39], [1236, 7.03], [1320, 7.1], [1289, 7.36], [1256, 7.35], [1312, 7.28]], [[1439, 7.63], [1433, 7.67], [1411, 7.46], [1459, 7.62], [1405, 7.58], [1471, 7.6], [1391, 7.43], [1426, 7.51], [1469, 7.54], [1465, 7.51], [1378, 7.48], [1432, 7.64], [1410, 7.51], [1404, 7.54], [1395, 7.49], [1416, 7.51], [1421, 7.58], [1456, 7.64], [1388, 7.4], [1400, 7.56], [1361, 7.41], [1421, 7.27], [1339, 7.34], [1381, 7.45], [1358, 7.43], [1378, 7.36], [1438, 7.6], [1354, 7.35], [1364, 7.37], [1294, 7.16], [1433, 7.44], [1403, 7.57], [1429, 7.69], [1357, 7.33], [1395, 7.52], [1436, 7.29], [1435, 7.41], [1424, 7.38], [1410, 7.61], [1401, 7.49], [1432, 7.56], [1408, 7.64], [1439, 7.54], [1487, 7.57], [1436, 7.53], [1414, 7.58], [1416, 7.57], [1367, 7.24], [1427, 7.44], [1381, 7.28]]], "texts": {"verdict": "", "eval": ["", "", "", "", "", "", "", "", ""], "look": ["", "", "", ""], "done": "", "todo": "", "act": []}, "checks": [], "caution": ""}</script>
+<script>
+const C1='#2F6FB0',C2='#D9822B',CT='#C0392B',FONT="'Noto Sans KR','Malgun Gothic',sans-serif";
+const $=s=>document.querySelector(s); const msg=t=>{$('#msg').textContent=t;setTimeout(()=>$('#msg').textContent='',3500)};
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+// ---------- stats ----------
+const mean=a=>a.reduce((s,x)=>s+x,0)/a.length;
+const sd=a=>{if(a.length<2)return NaN;const m=mean(a);return Math.sqrt(a.reduce((s,x)=>s+(x-m)**2,0)/(a.length-1))};
+const mn=a=>Math.min(...a),mx=a=>Math.max(...a);
+const corr=(x,y)=>{const mx_=mean(x),my=mean(y);let a=0,b=0,c=0;for(let i=0;i<x.length;i++){a+=(x[i]-mx_)*(y[i]-my);b+=(x[i]-mx_)**2;c+=(y[i]-my)**2}return a/Math.sqrt(b*c)};
+const fit=(x,y)=>{const mx_=mean(x),my=mean(y);let a=0,b=0;for(let i=0;i<x.length;i++){a+=(x[i]-mx_)*(y[i]-my);b+=(x[i]-mx_)**2}const s=a/b;return[s,my-s*mx_]};
+function betacf(a,b,x){let qab=a+b,qap=a+1,qam=a-1,c=1,d=1-qab*x/qap;if(Math.abs(d)<1e-30)d=1e-30;d=1/d;let h=d;for(let m=1;m<=200;m++){let m2=2*m,aa=m*(b-m)*x/((qam+m2)*(a+m2));d=1+aa*d;if(Math.abs(d)<1e-30)d=1e-30;c=1+aa/c;if(Math.abs(c)<1e-30)c=1e-30;d=1/d;h*=d*c;aa=-(a+m)*(qab+m)*x/((a+m2)*(qap+m2));d=1+aa*d;if(Math.abs(d)<1e-30)d=1e-30;c=1+aa/c;if(Math.abs(c)<1e-30)c=1e-30;d=1/d;const del=d*c;h*=del;if(Math.abs(del-1)<3e-12)break}return h}
+function lgamma(z){const g=[76.18009172947146,-86.50532032941677,24.01409824083091,-1.231739572450155,0.1208650973866179e-2,-0.5395239384953e-5];let x=z,y=z,t=x+5.5;t-=(x+.5)*Math.log(t);let s=1.000000000190015;for(const c of g)s+=c/++y;return -t+Math.log(2.5066282746310005*s/x)}
+function ibeta(a,b,x){if(x<=0)return 0;if(x>=1)return 1;const bt=Math.exp(lgamma(a+b)-lgamma(a)-lgamma(b)+a*Math.log(x)+b*Math.log(1-x));return x<(a+1)/(a+b+2)?bt*betacf(a,b,x)/a:1-bt*betacf(b,a,1-x)/b}
+function welch(a,b){if(a.length<2||b.length<2)return NaN;const va=sd(a)**2/a.length,vb=sd(b)**2/b.length,t=(mean(a)-mean(b))/Math.sqrt(va+vb),df=(va+vb)**2/(va*va/(a.length-1)+vb*vb/(b.length-1));return ibeta(df/2,.5,df/(df+t*t))}
+const q=(a,p)=>{const s=[...a].sort((x,y)=>x-y),i=(s.length-1)*p,lo=Math.floor(i);return s[lo]+(s[Math.min(lo+1,s.length-1)]-s[lo])*(i-lo)};
+const f0=v=>isFinite(v)?Math.round(v).toLocaleString('en-US').replace(/,/g,''):'-',f1=v=>isFinite(v)?v.toFixed(1):'-',f2=v=>isFinite(v)?v.toFixed(2):'-',f3=v=>isFinite(v)?v.toFixed(3):'-';
+const pct=(v,d=1)=>isFinite(v)?(v*100).toFixed(d)+'%':'-',sp=(v,d=1)=>isFinite(v)?(v>=0?'+':'−')+Math.abs(v*100).toFixed(d)+'%':'-';
+const pv=p=>!isFinite(p)?'-':p<0.001?'p &lt; 0.001':'p = '+p.toFixed(3);
+// ---------- read excel ----------
+function readXlsx(buf){
+  const wb=XLSX.read(buf,{type:'array',cellDates:true}); const si=wb.Sheets['입력']; if(!si) throw new Error('「입력」 시트를 찾을 수 없습니다.');
+  const v=(sh,a)=>{const c=sh[a];return c?c.v:''};
+  const D={names:[v(si,'C6')||'1차',v(si,'C7')||'2차'],lots:[+v(si,'E6')||0,+v(si,'E7')||0],n:[+v(si,'F6')||0,+v(si,'F7')||0],
+    info:{prd:v(si,'E11'),date:v(si,'E12'),author:v(si,'E13'),tg:+v(si,'E14')||1430,tt:+v(si,'E15')||7.6,gTol:Math.round((+v(si,'E14')||1430)*(+v(si,'E16')||0.05)),tTol:+((+v(si,'E15')||7.6)*(+v(si,'E16')||0.05)).toFixed(2),memo1:v(si,'E18'),memo2:v(si,'E19')},data:[[],[]],texts:{}};
+  if(D.info.date instanceof Date) D.info.date=D.info.date.toISOString().slice(0,10);
+  [['E','F'],['K','L']].forEach((cols,b)=>{const N=D.lots[b]*D.n[b];for(let k=1;k<=N;k++){const r=23+k;const g=v(si,cols[0]+r),t=v(si,cols[1]+r);D.data[b].push([g===''?null:+g,t===''?null:+t])}});
+  const st=wb.Sheets['보고서 문구'];
+  if(st){D.texts={verdict:v(st,'C4'),eval:[7,8,9,10,11,12,13,14].map(r=>v(st,'C'+r)),look:[17,18,19,20].map(r=>v(st,'C'+r)),done:v(st,'C23'),todo:v(st,'C24'),
+     act:[28,29,30,31,32,33].map(r=>[v(st,'C'+r),v(st,'H'+r)])}}
+  return D;
+}
+// ---------- analysis ----------
+function analyze(D){
+  const I=D.info,B=[0,1].map(b=>{
+    const L=D.lots[b],n=D.n[b],rows=D.data[b].map((x,i)=>({lot:Math.floor(i/n)+1,pos:i%n+1,g:x[0],t:x[1]}));
+    const seq=rows.filter(r=>r.g!=null||r.t!=null); const G=seq.filter(r=>r.g!=null).map(r=>r.g),T=seq.filter(r=>r.t!=null).map(r=>r.t);
+    const pr=seq.filter(r=>r.g!=null&&r.t!=null),R=pr.map(r=>r.g/r.t*0.001);
+    const lim=(arr)=>{const mr=[];for(let i=1;i<arr.length;i++)mr.push(Math.abs(arr[i]-arr[i-1]));const m=mean(arr),M=mean(mr);return{m,lcl:m-2.66*M,ucl:m+2.66*M,mr:M}};
+    const lg=lim(seq.map(r=>r.g).filter(x=>x!=null)),lt=lim(seq.map(r=>r.t).filter(x=>x!=null));
+    const outG=seq.filter(r=>r.g!=null&&(r.g<lg.lcl||r.g>lg.ucl)),outT=seq.filter(r=>r.t!=null&&(r.t<lt.lcl||r.t>lt.ucl));
+    const inG=v=>Math.abs(v-I.tg)<=I.gTol+1e-9,inT=v=>Math.abs(v-I.tt)<=I.tTol+1e-9;
+    const grp=(key,N)=>Array.from({length:N},(_,i)=>{const s=rows.filter(r=>r[key]===i+1);const g=s.map(r=>r.g).filter(x=>x!=null),t=s.map(r=>r.t).filter(x=>x!=null);return{k:i+1,g:g.length?mean(g):NaN,gs:sd(g),t:t.length?mean(t):NaN,ts:sd(t)}});
+    const byLot=grp('lot',L),byPos=grp('pos',n); const [s_,i_]=fit(pr.map(r=>r.g),pr.map(r=>r.t));
+    return{name:D.names[b],L,n,rows,seq,G,T,R,pr,lg,lt,outG,outT,wG:G.filter(inG).length,wT:T.filter(inT).length,wGT:pr.filter(r=>inG(r.g)&&inT(r.t)).length,byLot,byPos,r:corr(pr.map(r=>r.t),pr.map(r=>r.g)),pred:s_*I.tg+i_}
+  });
+  return{I,B,tr:I.tg/I.tt*0.001};
+}
+// ---------- render ----------
+const lab=r=>`${r.lot}-${r.pos}`;
+function bullets(txt,auto){const lines=String(txt||'').split(/\r?\n/).map(s=>s.trim()).filter(Boolean);const L=lines.length?lines:auto;return '<ul>'+L.map(s=>{const m=s.match(/^([^:：]{1,20})[:：]\s*(.*)$/);return '<li>'+(m?`<b>${esc(m[1])}:</b> ${esc(m[2])}`:esc(s))+'</li>'}).join('')+'</ul>'+(lines.length?'':'<span class="auto">※ 자동 생성 문구 (「보고서 문구」 시트에 입력하면 대체됨)</span>')}
+function render(D){
+  const A=analyze(D),I=A.I,[a,b]=A.B,T=D.texts||{},ev=T.eval||[],look=T.look||[];
+  const stat=arr=>({m:mean(arr),s:sd(arr),mn:mn(arr),mx:mx(arr),cv:sd(arr)/mean(arr)});
+  const S={g:[stat(a.G),stat(b.G)],t:[stat(a.T),stat(b.T)],r:[stat(a.R),stat(b.R)]};
+  const dev=(v,t)=>v/t-1, cls=d=>Math.abs(d)<=0.01?'ok':Math.abs(d)<=0.03?'mid':'lo';
+  const autoEval=d=>Math.abs(d)<=0.01?'목표 수준 도달':Math.abs(d)<=0.03?'목표 근접':d<0?'목표 미달':'목표 초과';
+  const E=(i,auto)=>ev[i]?esc(ev[i]):`<span style="color:#999">${auto}</span>`;
+  const dg=b.G.length?dev(S.g[1].m,I.tg):NaN,dt=dev(S.t[1].m,I.tt),dr=dev(S.r[1].m,A.tr);
+  const autoVerdict=`${a.name} 대비 ${b.name}에서 목표 대비 중량 ${pct(S.g[1].m/I.tg)}, 두께 ${pct(S.t[1].m/I.tt)}이며, 밀도(중량/두께×0.001)는 ${f3(S.r[1].m)} g/cm³로 목표 ${f3(A.tr)}의 ${pct(S.r[1].m/A.tr)}이다. 중량은 목표까지 ${f0(I.tg-S.g[1].m)} gsm${I.tg-S.g[1].m>=0?' 부족':' 초과'}하며, ${b.name} 추세식으로 보면 목표 중량에서 두께는 약 ${f2(b.pred)} t로 예상된다. 관리한계 이탈은 ${a.outG.length+a.outT.length}개 → ${b.outG.length+b.outT.length}개다.`;
+  const posTxt=(B,key,dec)=>{const v=B.byLot.filter(x=>isFinite(x[key]));if(!v.length)return['-','-','-'];const hi=v.reduce((p,c)=>c[key]>p[key]?c:p),lo=v.reduce((p,c)=>c[key]<p[key]?c:p);return[`${hi.k}로트 (${dec(hi[key])})`,`${lo.k}로트 (${dec(lo[key])})`,dec(hi[key]-lo[key])]};
+  const doneAuto=[`밀도: ${b.name} ${f3(S.r[1].m)} g/cm³, 목표 ${f3(A.tr)}의 ${pct(S.r[1].m/A.tr)}`,`균일도(CV): 중량 ${pct(S.g[0].cv)}→${pct(S.g[1].cv)}, 두께 ${pct(S.t[0].cv)}→${pct(S.t[1].cv)}`,`관리한계 이탈: ${a.outG.length+a.outT.length}개 → ${b.outG.length+b.outT.length}개`];
+  const todoAuto=[`중심값 보정: 중량 ${sp(dg)}, 두께 ${sp(dt)}`,`관리 하한·상한 이탈 시료: ${[...b.outG,...b.outT].map(lab).join(', ')||'없음'}`];
+  const act=(T.act||[]).filter(x=>x&&(x[0]||x[1]));
+  const date=I.date?String(I.date).slice(0,10)+' · ':'';
+  const cnt=(w,B)=>`${w} / ${B.pr.length}개 (${B.pr.length?Math.round(w/B.pr.length*100):0}%)`;
+  let h=`<header><div class="tag">최종 보고 · 품질 분석</div><h1>${esc(I.prd||'OxyFelt')} 조건 셋업 결과 보고 (${esc(a.name)}·${esc(b.name)} 샘플)</h1>
+<p class="meta">(주)한부솔루션 품질 · ${esc(date)}목표 <b>중량 ${f0(I.tg)} gsm / 두께 ${f1(I.tt)} t</b> · ${esc(a.name)} ${a.L}로트×${a.n}개, ${esc(b.name)} ${b.L}로트×${b.n}개${I.author?' · 작성자 '+esc(I.author):''}</p></header>
+<section class="exec"><h2>종합 요약</h2>
+<div class="verdict"><b class="k">결론</b>${T.verdict?esc(T.verdict):esc(autoVerdict)+'<span class="auto">※ 자동 생성 문구</span>'}</div>
+<table class="sum"><tr><th rowspan=2>항목</th><th rowspan=2>목표</th><th colspan=3>${esc(a.name)} (조건 셋팅)</th><th colspan=3>${esc(b.name)}</th><th rowspan=2>평가</th></tr>
+<tr><th>평균</th><th>목표 대비</th><th>CV</th><th>평균</th><th>목표 대비</th><th>CV</th></tr>`;
+  [['중량 (gsm)',I.tg,S.g,f0,0],['두께 (t)',I.tt,S.t,f2,1],['밀도 (g/cm³)',A.tr,S.r,f3,2]].forEach(([nm,tg,s,fm,i])=>{const d0=dev(s[0].m,tg),d1=dev(s[1].m,tg);
+    h+=`<tr><td>${nm}</td><td><b>${fm(tg)}</b></td><td>${fm(s[0].m)}</td><td class="${cls(d0)}">${sp(d0)}</td><td>${pct(s[0].cv)}</td><td><b>${fm(s[1].m)}</b></td><td class="${cls(d1)}">${sp(d1)}</td><td>${pct(s[1].cv)}</td><td>${E(i,autoEval(d1))}</td></tr>`});
+  const cn=(w,N)=>`${w} / ${N}개 (${N?Math.round(w/N*100):0}%)`;
+  h+=`<tr><td>중량 규격 이내 (${f0(I.tg-I.gTol)}~${f0(I.tg+I.gTol)})</td><td>±${f0(I.gTol)}</td><td colspan=3>${cn(a.wG,a.G.length)}</td><td colspan=3><b>${cn(b.wG,b.G.length)}</b></td><td>${E(3,'')}</td></tr>
+<tr><td>두께 규격 이내 (${f2(I.tt-I.tTol)}~${f2(I.tt+I.tTol)})</td><td>±${f2(I.tTol)}</td><td colspan=3>${cn(a.wT,a.T.length)}</td><td colspan=3><b>${cn(b.wT,b.T.length)}</b></td><td>${E(4,'')}</td></tr>
+<tr><td>중량·두께 모두 규격 이내</td><td>—</td><td colspan=3>${cn(a.wGT,a.pr.length)}</td><td colspan=3><b>${cn(b.wGT,b.pr.length)}</b></td><td>${E(5,'')}</td></tr>
+<tr><td>관리한계 이탈 시료</td><td>—</td><td colspan=3>${a.outG.length+a.outT.length}개</td><td colspan=3><b>${b.outG.length+b.outT.length}개</b>${b.outG.length+b.outT.length?' ('+[...new Set([...b.outG,...b.outT].map(lab))].join(', ')+')':''}</td><td>${E(6,'')}</td></tr>
+<tr><td>표면 상태</td><td>매끈</td><td colspan=3>${esc(look[0])||'—'}</td><td colspan=3 class="${look[1]?'mid':''}">${esc(look[1])||'—'}</td><td>${E(7,'')}</td></tr>
+<tr><td>웹 밀림</td><td>없음</td><td colspan=3>${esc(look[2])||'—'}</td><td colspan=3 class="${look[3]?'mid':''}">${esc(look[3])||'—'}</td><td>${E(8,'')}</td></tr></table>`;
+  const CK=(D.checks||[]).filter(c=>c&&(c.item||c.std||c.r1||c.r2)),CAU=String(D.caution||'').trim();
+  if(CK.length||CAU){const jc=j=>/부적합|불합격|NG/i.test(j)?'lo':/적합|합격|OK/i.test(j)?'ok':j?'mid':'';
+    h+=`<div class="caution"><h4>⚠ 주의사항 · 추가 점검 기준</h4>`+(CAU?`<p>${esc(CAU).replace(/\n/g,'<br>')}</p>`:'')+(CK.length?`<table><tr><th>No</th><th>점검 항목</th><th>기준</th><th>${esc(a.name)} 결과</th><th>${esc(b.name)} 결과</th><th>판정</th></tr>`+CK.map((c,i)=>`<tr><td>${i+1}</td><td>${esc(c.item)}</td><td>${esc(c.std)}</td><td>${esc(c.r1)}</td><td>${esc(c.r2)}</td><td class="${jc(c.judge||'')}">${esc(c.judge||'')}</td></tr>`).join('')+'</table>':'')+'</div>'}
+  h+=`
+<figure><div class="g2"><div id="f0a" class="ch h"></div><div id="f0b" class="ch h"></div></div><figcaption>그림 0. 목표 달성률 — ${esc(a.name)} 대비 ${esc(b.name)}에서 중량 ${((S.g[1].m-S.g[0].m)/I.tg*100).toFixed(1)}%p, 두께 ${((S.t[1].m-S.t[0].m)/I.tt*100).toFixed(1)}%p 변화</figcaption></figure>
+<div class="grid2"><div class="box"><h4>✔ 달성된 것</h4>${bullets(T.done,doneAuto)}</div><div class="box"><h4>▲ 남은 과제</h4>${bullets(T.todo,todoAuto)}</div></div>`;
+  if(act.length){h+=`<table class="act"><tr><th>No</th><th>다음 조치</th><th>기대 효과</th></tr>`+act.map((x,i)=>`<tr><td>${i+1}</td><td>${esc(x[0])}</td><td>${esc(x[1])}</td></tr>`).join('')+'</table>'}
+  h+=`<p class="cap">※ 규격: 중량 ${f0(I.tg)} ± ${f0(I.gTol)} gsm, 두께 ${f2(I.tt)} ± ${f2(I.tTol)} t. 밀도(g/cm³) = 중량(gsm) ÷ 두께(mm) × 0.001. 관리한계 = 평균 ± 2.66 × MR̄.</p></section>`;
+  // 1
+  const pT=[welch(a.G,b.G),welch(a.T,b.T),welch(a.R,b.R)];
+  const cpk=(arr,t,tol)=>{if(!tol||arr.length<2)return NaN;const m=mean(arr),d=sd(arr);return Math.min(t+tol-m,m-(t-tol))/(3*d)};
+  h+=`<section><h2>1. 분포 비교</h2><table><tr><th>항목</th><th>차수</th><th>n</th><th>평균</th><th>표준편차</th><th>최소</th><th>최대</th><th>범위</th><th>CV</th><th>규격 이내</th><th>Cpk</th></tr>`;
+  [['중량 (gsm)',S.g,f0,f1,a.G,b.G,I.tg,I.gTol],['두께 (t)',S.t,f3,f3,a.T,b.T,I.tt,I.tTol],['밀도 (g/cm³)',S.r,f3,v=>isFinite(v)?v.toFixed(4):'-',a.R,b.R,0,0]].forEach(([nm,s,fm,fs,x0,x1,tg,tol])=>{
+    const inn=x=>tol?pct(x.filter(v=>Math.abs(v-tg)<=tol+1e-9).length/x.length,0):'—',ck=x=>tol?f2(cpk(x,tg,tol)):'—';
+    h+=`<tr><td rowspan=2>${nm}</td><td>${esc(a.name)}</td><td>${x0.length}</td><td>${fm(s[0].m)}</td><td>${fs(s[0].s)}</td><td>${fm(s[0].mn)}</td><td>${fm(s[0].mx)}</td><td>${fm(s[0].mx-s[0].mn)}</td><td>${pct(s[0].cv,2)}</td><td>${inn(x0)}</td><td>${ck(x0)}</td></tr>
+<tr><td>${esc(b.name)}</td><td>${x1.length}</td><td>${fm(s[1].m)}</td><td>${fs(s[1].s)}</td><td>${fm(s[1].mn)}</td><td>${fm(s[1].mx)}</td><td>${fm(s[1].mx-s[1].mn)}</td><td>${pct(s[1].cv,2)}</td><td>${inn(x1)}</td><td>${ck(x1)}</td></tr>`});
+  h+=`</table><figure><div class="g3"><div id="f1a" class="ch s"></div><div id="f1b" class="ch s"></div><div id="f1c" class="ch s"></div></div><figcaption>그림 1. 차수별 분포 (빨간 점선 = 목표, 회색 점선 = 규격 상·하한). 차수 간 평균 차이(Welch t-검정): 중량 ${pv(pT[0])}, 두께 ${pv(pT[1])}, 밀도 ${pv(pT[2])}</figcaption></figure></section>`;
+  // 2
+  h+=`<section><h2>2. 두께-중량 상관</h2><figure><div id="f2" class="ch t" style="max-width:660px"></div><figcaption>그림 2. 상관계수 ${esc(a.name)} ${f2(a.r)} → ${esc(b.name)} ${f2(b.r)}. ${esc(b.name)} 추세식 기준 목표 중량(${f0(I.tg)} gsm)일 때 예상 두께 ${f2(b.pred)} t (★ = 목표)</figcaption></figure></section>`;
+  // 3
+  const Lm=Math.max(a.L,b.L);
+  h+=`<section><h2>3. 위치별 분포</h2><table><tr><th>로트</th><th>${esc(a.name)} 중량</th><th>${esc(a.name)} 두께</th><th>${esc(b.name)} 중량</th><th>${esc(b.name)} 두께</th></tr>`;
+  const ext=(B,k)=>{const v=B.byLot.map(x=>x[k]).filter(isFinite);return[mx(v),mn(v)]};
+  const eg1=ext(a,'g'),et1=ext(a,'t'),eg2=ext(b,'g'),et2=ext(b,'t');
+  const cl=(v,e)=>!isFinite(v)?'':v===e[0]?'hi':v===e[1]?'lo':'';
+  for(let i=0;i<Lm;i++){const x=a.byLot[i]||{},y=b.byLot[i]||{};h+=`<tr><td>${i+1}로트</td><td class="${cl(x.g,eg1)}">${f0(x.g)}</td><td class="${cl(x.t,et1)}">${f2(x.t)}</td><td class="${cl(y.g,eg2)}">${f0(y.g)}</td><td class="${cl(y.t,et2)}">${f2(y.t)}</td></tr>`}
+  h+=`<tr><th>로트 간 차이</th><th>${f0(eg1[0]-eg1[1])}</th><th>${f2(et1[0]-et1[1])}</th><th>${f0(eg2[0]-eg2[1])}</th><th>${f2(et2[0]-et2[1])}</th></tr></table>
+<figure><div class="g2"><div id="f3a" class="ch"></div><div id="f3b" class="ch"></div></div><figcaption>그림 3. 로트별 평균과 표준편차(오차막대), 빨간 점선 = 목표</figcaption></figure>
+<figure><div class="g2"><div id="f4a" class="ch"></div><div id="f4b" class="ch"></div><div id="f4c" class="ch"></div><div id="f4d" class="ch"></div></div><figcaption>그림 4. 위치별 히트맵 (행 = 로트, 열 = 시편 번호, 색이 진할수록 큼)</figcaption></figure></section>`;
+  // 4
+  h+=`<section><h2>4. 공정 안정성 (개별값 관리도)</h2><figure><div id="f5a" class="ch" style="height:280px"></div><div id="f5b" class="ch" style="height:300px"></div><figcaption>그림 5. 개별값 관리도 — 실선: 차수별 평균, 점선: 관리한계(±2.66·MR̄), 빨간 실선: 목표, 회색 일점쇄선: 규격 상·하한, 빨간 원: 한계 이탈</figcaption></figure>
+<table><tr><th>차수</th><th>항목</th><th>관리한계</th><th>한계 이탈 시료</th><th>개수</th></tr>
+<tr><td rowspan=2>${esc(a.name)}</td><td>중량</td><td>${f0(a.lg.lcl)} ~ ${f0(a.lg.ucl)} gsm</td><td>${a.outG.map(lab).join(', ')||'없음'}</td><td>${a.outG.length}</td></tr>
+<tr><td>두께</td><td>${f2(a.lt.lcl)} ~ ${f2(a.lt.ucl)} t</td><td>${a.outT.map(lab).join(', ')||'없음'}</td><td>${a.outT.length}</td></tr>
+<tr><td rowspan=2>${esc(b.name)}</td><td>중량</td><td>${f0(b.lg.lcl)} ~ ${f0(b.lg.ucl)} gsm</td><td>${b.outG.map(lab).join(', ')||'없음'}</td><td>${b.outG.length}</td></tr>
+<tr><td>두께</td><td>${f2(b.lt.lcl)} ~ ${f2(b.lt.ucl)} t</td><td>${b.outT.map(lab).join(', ')||'없음'}</td><td>${b.outT.length}</td></tr></table></section>`;
+  // appendix
+  h+=`<section><h2>부록. 원데이터 (칸 안: 중량 gsm / 두께 t)</h2>`;
+  [a,b].forEach(B=>{h+=`<h3 style="font-size:14px;margin:18px 0 6px">${esc(B.name)}</h3><table class="raw"><tr><th>로트＼시편</th>`+Array.from({length:B.n},(_,i)=>`<th>${i+1}</th>`).join('')+'</tr>';
+    for(let l=1;l<=B.L;l++){h+=`<tr><th>${l}로트</th>`;for(let p=1;p<=B.n;p++){const r=B.rows[(l-1)*B.n+p-1];h+=`<td>${r&&r.g!=null?f0(r.g):''}<br><small>${r&&r.t!=null?f2(r.t):''}</small></td>`}h+='</tr>'}h+='</table>'});
+  h+='</section>';
+  $('#rep').innerHTML=h; charts(A,S);
+}
+// ---------- charts ----------
+const base=(o={})=>Object.assign({font:{family:FONT,size:11,color:'#1d2530'},margin:{l:52,r:14,t:34,b:40},paper_bgcolor:'#fff',plot_bgcolor:'#fff',showlegend:false,
+  xaxis:{showline:true,linecolor:'#333',gridcolor:'rgba(0,0,0,.08)',zeroline:false,ticks:'outside'},yaxis:{showline:true,linecolor:'#333',gridcolor:'rgba(0,0,0,.08)',zeroline:false,ticks:'outside'}},o);
+const cfg={displayModeBar:false,responsive:true,staticPlot:false};
+const hline=(y,x0=0,x1=1,col=CT,dash='dash',w=1.3,xref='paper')=>({type:'line',xref,x0,x1,y0:y,y1:y,line:{color:col,dash,width:w}});
+const title=t=>({text:t,font:{size:13},x:.5});
+const rgba=(c,a)=>{const n=parseInt(c.slice(1),16);return`rgba(${n>>16},${n>>8&255},${n&255},${a})`};
+function charts(A,S){
+  const I=A.I,[a,b]=A.B,P=Plotly;
+  // fig0
+  [['f0a','중량',S.g,I.tg,v=>f0(v)+' gsm'],['f0b','두께',S.t,I.tt,v=>f2(v)+' t']].forEach(([id,nm,s,tg,u])=>{
+    const v=[s[0].m/tg*100,s[1].m/tg*100];
+    P.newPlot(id,[{type:'bar',orientation:'h',y:[a.name,b.name],x:v,marker:{color:[C1,C2],opacity:.85},width:.5,text:v.map((x,i)=>`<b>${x.toFixed(1)}%  (${u(s[i].m)})</b>`),textposition:'inside',insidetextanchor:'end',textfont:{color:'#fff',size:12},hoverinfo:'x'}],
+      base({title:title(`${nm} 목표 달성률 (목표 ${nm==='중량'?f0(tg)+' gsm':f1(tg)+' t'} = 100%)`),xaxis:{range:[70,104],showline:true,linecolor:'#333',gridcolor:'rgba(0,0,0,.08)',ticks:'outside'},yaxis:{autorange:'reversed',showline:true,linecolor:'#333',showgrid:false},
+      shapes:[{type:'line',x0:100,x1:100,yref:'paper',y0:0,y1:1,line:{color:CT,dash:'dash',width:1.4}}],margin:{l:40,r:14,t:34,b:30}}),cfg)});
+  // fig1 box
+  [['f1a','중량 (gsm)',a.G,b.G,I.tg,I.gTol],['f1b','두께 (mm)',a.T,b.T,I.tt,I.tTol],['f1c','밀도 (g/cm³)',a.R,b.R,A.tr,0]].forEach(([id,nm,x0,x1,tg,tol])=>{
+    const tr=[[x0,a.name,C1],[x1,b.name,C2]].map(([y,n,c])=>({type:'box',y,name:n,boxpoints:'all',jitter:.45,pointpos:0,marker:{color:c,size:4,opacity:.85},fillcolor:rgba(c,.5),line:{color:'#222',width:1},quartilemethod:'linear',whiskerwidth:.5,hoverinfo:'y'}));
+    const spec=tol?[hline(tg-tol,0,1,'#888','dot',1),hline(tg+tol,0,1,'#888','dot',1)]:[];P.newPlot(id,tr,base({title:title(nm),yaxis:Object.assign({showline:true,linecolor:'#333',gridcolor:'rgba(0,0,0,.08)',ticks:'outside'},nm.startsWith('밀도')?{tickformat:'.3f'}:{}),shapes:[hline(tg),...spec],annotations:[{xref:'paper',x:1,y:tg,text:'목표',showarrow:false,font:{color:CT,size:10},xanchor:'right',yanchor:'bottom'}],margin:{l:46,r:8,t:34,b:30}}),cfg)});
+  // fig2
+  const tr2=[];[[a,C1],[b,C2]].forEach(([B,c])=>{const x=B.pr.map(r=>r.t),y=B.pr.map(r=>r.g);tr2.push({type:'scatter',mode:'markers',x,y,name:`${B.name} (r=${f2(B.r)})`,marker:{color:c,size:7,opacity:.8}});
+    if(x.length>1){const[s_,i_]=fit(x,y),xs=[mn(x),mx(x)];tr2.push({type:'scatter',mode:'lines',x:xs,y:xs.map(v=>s_*v+i_),line:{color:c,width:2},showlegend:false,hoverinfo:'skip'})}});
+  tr2.push({type:'scatter',mode:'markers',x:[I.tt],y:[I.tg],name:`목표 (${f1(I.tt)}t, ${f0(I.tg)}gsm)`,marker:{symbol:'star',size:18,color:CT}});
+  P.newPlot('f2',tr2,base({title:title('두께-중량 상관관계와 목표점'),showlegend:true,legend:{x:.01,y:.99,bgcolor:'rgba(255,255,255,0)'},xaxis:{title:'두께 (mm)',showline:true,linecolor:'#333',gridcolor:'rgba(0,0,0,.08)',ticks:'outside'},yaxis:{title:'중량 (gsm)',showline:true,linecolor:'#333',gridcolor:'rgba(0,0,0,.08)',ticks:'outside'},
+    shapes:[hline(I.tg,0,1,CT,'dot',.8),{type:'line',x0:I.tt,x1:I.tt,yref:'paper',y0:0,y1:1,line:{color:CT,dash:'dot',width:.8}}],margin:{l:56,r:14,t:34,b:46}}),cfg);
+  // fig3
+  const Lm=Math.max(a.L,b.L),lots=Array.from({length:Lm},(_,i)=>`${i+1}로트`);
+  [['f3a','g','gs','중량 (gsm)',I.tg],['f3b','t','ts','두께 (mm)',I.tt]].forEach(([id,k,ks,nm,tg],j)=>{
+    const tr=[[a,C1],[b,C2]].map(([B,c])=>({type:'bar',name:B.name,x:lots,y:lots.map((_,i)=>B.byLot[i]?B.byLot[i][k]:null),error_y:{type:'data',array:lots.map((_,i)=>B.byLot[i]?B.byLot[i][ks]||0:0),color:'#333',thickness:1.2,width:3},marker:{color:c,opacity:.8}}));
+    const all=[a,b].flatMap(B=>B.byLot.map(x=>x[k])).filter(isFinite);const lo=Math.min(mn(all),tg)*0.97,hi=Math.max(mx(all),tg)*1.01;
+    tr.push({type:'scatter',mode:'lines',x:[lots[0],lots[Lm-1]],y:[tg,tg],name:'목표',line:{color:CT,dash:'dash',width:1.3},hoverinfo:'skip'});
+    P.newPlot(id,tr,base({title:title(`로트별 평균 ${nm} (오차막대=표준편차)`),barmode:'group',bargap:.25,showlegend:j===0,legend:{orientation:'h',x:0,y:1.0,yanchor:'bottom',bgcolor:'rgba(0,0,0,0)'},yaxis:{range:[lo,hi],showline:true,linecolor:'#333',gridcolor:'rgba(0,0,0,.08)',ticks:'outside'},shapes:[hline(tg)],margin:{l:52,r:10,t:52,b:36}}),cfg)});
+  // fig4 heatmaps
+  [['f4a',a,'g','Blues',`${a.name} 중량 (gsm) 분포`,0],['f4b',a,'t','Oranges',`${a.name} 두께 (mm) 분포`,2],['f4c',b,'g','Blues',`${b.name} 중량 (gsm) 분포`,0],['f4d',b,'t','Oranges',`${b.name} 두께 (mm) 분포`,2]].forEach(([id,B,k,cs,nm,d])=>{
+    const z=Array.from({length:B.L},(_,l)=>Array.from({length:B.n},(_,p)=>{const r=B.rows[l*B.n+p];return r&&r[k]!=null?r[k]:null}));
+    const fz=z.flat().filter(v=>v!=null),thr=fz.length?q(fz,.7):0;
+    const ann=[];z.forEach((row,l)=>row.forEach((v,p)=>{if(v!=null)ann.push({x:p+1,y:`${l+1}로트`,text:d?v.toFixed(2):String(Math.round(v)),showarrow:false,font:{size:B.n>12?7:9,color:v>=thr?'#fff':'#000'}})}));
+    P.newPlot(id,[{type:'heatmap',z,x:Array.from({length:B.n},(_,i)=>i+1),y:Array.from({length:B.L},(_,i)=>`${i+1}로트`),colorscale:cs,reversescale:false,xgap:0,ygap:0,colorbar:{thickness:10,len:.85},hoverongaps:false}],
+      base({title:title(nm),annotations:ann,xaxis:{dtick:1,showline:false,ticks:'',side:'bottom'},yaxis:{autorange:'reversed',showline:false,ticks:''},margin:{l:52,r:6,t:32,b:26}}),cfg)});
+  // fig5
+  [['f5a','중량 (gsm)','g','lg','outG',I.tg,f0,I.gTol],['f5b','두께 (mm)','t','lt','outT',I.tt,f2,I.tTol]].forEach(([id,nm,k,lk,ok,tg,fm,tol],j)=>{
+    const tr=[],sh=[];let maxN=0;
+    [[a,C1],[b,C2]].forEach(([B,c])=>{const s=B.seq.filter(r=>r[k]!=null);maxN=Math.max(maxN,s.length);
+      tr.push({type:'scatter',mode:'lines+markers',x:s.map((_,i)=>i+1),y:s.map(r=>r[k]),text:s.map(lab),name:B.name,line:{color:c,width:1},marker:{color:c,size:5},hovertemplate:'%{text}: %{y}<extra></extra>'});
+      const L=B[lk];[[L.m,'solid'],[L.ucl,'dash'],[L.lcl,'dash']].forEach(([y,ds])=>sh.push(hline(y,0,1,c,ds,.8)));
+      const o=s.map((r,i)=>[r,i+1]).filter(([r])=>B[ok].includes(r));tr.push({type:'scatter',mode:'markers',x:o.map(x=>x[1]),y:o.map(x=>x[0][k]),marker:{size:12,color:'rgba(0,0,0,0)',line:{color:'red',width:1.6}},showlegend:false,hoverinfo:'skip'})});
+    sh.push(hline(tg,0,1,CT,'solid',1.4));if(tol){sh.push(hline(tg-tol,0,1,'#888','dashdot',1));sh.push(hline(tg+tol,0,1,'#888','dashdot',1))}
+    const n0=a.n;for(let v=n0+.5;v<maxN;v+=n0)sh.push({type:'line',x0:v,x1:v,yref:'paper',y0:0,y1:1,line:{color:'gray',width:.5,dash:'dot'}});
+    P.newPlot(id,tr,base({title:j===0?title('개별값 관리도(I-Chart) — 실선: 평균, 점선: 관리한계(±2.66·MR̄), 빨간 원: 한계 이탈'):undefined,showlegend:j===0,legend:{orientation:'h',x:0,y:1,yanchor:'bottom',bgcolor:'rgba(0,0,0,0)'},shapes:sh,
+      annotations:[{xref:'paper',x:1.0,y:tg,text:'목표',showarrow:false,font:{color:CT,size:10},xanchor:'left'}],
+      xaxis:{title:j===1?`시료 순번 (1~${a.n}: 1로트, ${a.n+1}~${2*a.n}: 2로트 …)`:'',range:[0,maxN+1],showline:true,linecolor:'#333',gridcolor:'rgba(0,0,0,.08)',ticks:'outside'},yaxis:{title:nm,showline:true,linecolor:'#333',gridcolor:'rgba(0,0,0,.08)',ticks:'outside'},margin:{l:56,r:40,t:j===0?52:14,b:j===1?46:22}}),cfg)});
+}
+
+// ================= APP =================
+const APP_VERSION='1.1.0', APP_DATE='2026-11-19';
+const CHANGELOG=[['1.1.0','2026-11-19','중량·두께 허용범위(규격) 입력 추가 및 규격 이내 비율·Cpk 표시, 밀도(g/cm³ = 중량/두께×0.001, 소수점 3자리) 표시, 주의사항·추가 점검 기준 입력 및 보고서 반영'],['1.0.0','2026-11-19','최초 배포: 시편 데이터 입력, 보고서 미리보기, PNG·PDF 내보내기, 엑셀 양식 불러오기, 작업 저장/불러오기']];
+const DEMO=true;const DEF=JSON.parse(document.getElementById('def').textContent);
+const KEY='oxyfelt-report-app-v1';
+function toGrid(list,L,n){const g=[],t=[];for(let l=0;l<L;l++){g.push([]);t.push([]);for(let p=0;p<n;p++){const x=list[l*n+p]||[null,null];g[l].push(x[0]);t[l].push(x[1])}}return{g,t}}
+function fromD(D){return{checks:JSON.parse(JSON.stringify(D.checks||[])),caution:D.caution||'',names:[...D.names],lots:[...D.lots],n:[...D.n],info:{...D.info},grid:[0,1].map(b=>toGrid(D.data[b],D.lots[b],D.n[b])),texts:JSON.parse(JSON.stringify(D.texts||{}))}}
+function toD(S){return{names:S.names,lots:S.lots,n:S.n,info:S.info,texts:S.texts,checks:S.checks,caution:S.caution,data:[0,1].map(b=>{const o=[];for(let l=0;l<S.lots[b];l++)for(let p=0;p<S.n[b];p++)o.push([S.grid[b].g[l]?.[p]??null,S.grid[b].t[l]?.[p]??null]);return o})}}
+let ST=fromD(DEF);
+const store={get(){try{return JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){return null}},set(v){try{localStorage.setItem(KEY,JSON.stringify(v))}catch(e){}}};
+const saved=store.get(); if(saved&&saved.state) ST=saved.state;
+let saveT=null; const autosave=()=>{clearTimeout(saveT);saveT=setTimeout(()=>{store.set({state:ST,ver:APP_VERSION});$('#saved').textContent='자동 저장됨 '+new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'})},400)};
+function ensureTexts(){const I=ST.info;if(I.gTol==null||I.gTol===''){I.gTol=I.tolA?Math.round(I.tg*I.tolA):70}if(I.tTol==null||I.tTol===''){I.tTol=I.tolA?+(I.tt*I.tolA).toFixed(2):0.4}delete I.tolA;delete I.tolB;
+  if(!Array.isArray(ST.checks))ST.checks=[];while(ST.checks.length<3)ST.checks.push({item:'',std:'',r1:'',r2:'',judge:''});if(ST.caution==null)ST.caution='';
+  const T=ST.texts;T.eval=T.eval||Array(9).fill('');if(T.eval.length===8)T.eval=[T.eval[0],T.eval[1],T.eval[2],'','',T.eval[3],T.eval[5],T.eval[6],T.eval[7]];T.look=T.look||Array(4).fill('');T.act=T.act||[];while(T.act.length<6)T.act.push(['',''])}
+ensureTexts();
+// ---------- tabs ----------
+function tab(id){document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===id));document.querySelectorAll('.pane').forEach(p=>p.hidden=p.id!==id);if(id==='pPrev')preview();if(id==='pData')drawGrids()}
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>tab(b.dataset.t));
+// ---------- settings ----------
+const fields=[['prd','제품명','text','info'],['date','작성일','date','info'],['author','작성자','text','info'],['tg','목표 중량 (gsm)','number','info'],['tt','목표 두께 (t)','number','info'],['gTol','중량 허용범위 (± gsm)','number','info'],['tTol','두께 허용범위 (± t)','number','info']];
+function drawSettings(){
+  let h='<h3>기본 정보 · 목표</h3><div class="form">';
+  fields.forEach(([k,l,ty])=>{const v=ST.info[k]??'';h+=`<label>${l}<input data-k="${k}" type="${ty==='pct'?'number':ty}" step="any" value="${ty==='pct'?(v===''?'':+(v*100).toFixed(3)):esc(v)}"></label>`});
+  h+='</div><p class="hint" id="specTxt"></p><h3>시료 수량 설정</h3><table class="cfg"><tr><th>구분</th><th>차수 명칭</th><th>로트(채취) 수</th><th>로트당 시편 수</th><th>총 시료 수</th><th>조건 메모</th></tr>';
+  [0,1].forEach(b=>{h+=`<tr><td>차수 ${b+1}</td><td><input data-b="${b}" data-f="name" value="${esc(ST.names[b])}"></td><td><input data-b="${b}" data-f="lots" type="number" min="1" max="100" value="${ST.lots[b]}"></td><td><input data-b="${b}" data-f="n" type="number" min="1" max="40" value="${ST.n[b]}"></td><td id="tot${b}">${ST.lots[b]*ST.n[b]}개</td><td><input data-b="${b}" data-f="memo" value="${esc(ST.info['memo'+(b+1)]||'')}"></td></tr>`});
+  h+='</table><p class="hint">로트 수·시편 수를 바꿔도 이미 입력한 값은 같은 로트-시편 위치에 그대로 남습니다. (로트 최대 100, 시편 최대 40)</p>';
+  h+='<h3>⚠ 주의사항 · 추가 점검 기준</h3><p class="hint">기본 스펙(중량·두께) 외에 추가로 확인해야 할 기준을 적습니다. 내용이 있으면 보고서 종합 요약에 「주의사항 · 추가 점검 기준」 박스로 표시됩니다.</p>';
+  h+=`<label class="full">주의사항 (자유 기재)<textarea id="caution" rows="3" placeholder="예) 탄화 공정 투입 전 외관 전수 확인 / 고객 요청 시 인장강도 성적서 첨부">${esc(ST.caution||'')}</textarea></label>`;
+  h+='<table class="cfg chk"><tr><th>No</th><th>점검 항목</th><th>기준</th><th>'+esc(ST.names[0])+' 결과</th><th>'+esc(ST.names[1])+' 결과</th><th>판정</th><th></th></tr>'+ST.checks.map((c,i)=>`<tr><td>${i+1}</td><td><input data-c="item" data-i="${i}" value="${esc(c.item)}" placeholder="예) 폭 방향 두께 편차"></td><td><input data-c="std" data-i="${i}" value="${esc(c.std)}" placeholder="예) 로트 내 최대-최소 ≤ 0.30 t"></td><td><input data-c="r1" data-i="${i}" value="${esc(c.r1)}"></td><td><input data-c="r2" data-i="${i}" value="${esc(c.r2)}"></td><td><select data-c="judge" data-i="${i}">${['','적합','확인 필요','부적합'].map(o=>`<option${o===c.judge?' selected':''}>${o}</option>`).join('')}</select></td><td><button class="mini" data-del="${i}">삭제</button></td></tr>`).join('')+'</table><button class="mini" id="addChk">점검 항목 추가</button>';
+  $('#pSet').innerHTML=h; specTxt();
+  $('#caution').oninput=e=>{ST.caution=e.target.value;autosave()};
+  $('#pSet').querySelectorAll('[data-c]').forEach(x=>{const f=()=>{ST.checks[+x.dataset.i][x.dataset.c]=x.value;autosave()};x.oninput=f;x.onchange=f});
+  $('#pSet').querySelectorAll('[data-del]').forEach(x=>x.onclick=()=>{ST.checks.splice(+x.dataset.del,1);drawSettings();autosave()});
+  $('#addChk').onclick=()=>{ST.checks.push({item:'',std:'',r1:'',r2:'',judge:''});drawSettings();autosave()};
+  $('#pSet').querySelectorAll('input[data-k]').forEach(i=>i.oninput=()=>{const k=i.dataset.k,f=fields.find(x=>x[0]===k)[2];ST.info[k]=f==='number'?(i.value===''?'':+i.value):f==='pct'?(i.value===''?'':+i.value/100):i.value;specTxt();autosave()});
+  $('#pSet').querySelectorAll('input[data-b]').forEach(i=>i.oninput=()=>{const b=+i.dataset.b,f=i.dataset.f;
+    if(f==='name')ST.names[b]=i.value; else if(f==='memo')ST.info['memo'+(b+1)]=i.value;
+    else{const v=Math.max(1,Math.min(f==='lots'?100:40,parseInt(i.value)||1));ST[f][b]=v;resize(b);$('#tot'+b).textContent=ST.lots[b]*ST.n[b]+'개'}autosave()});
+}
+function specTxt(){const I=ST.info,el=$('#specTxt');if(!el)return;const ok=isFinite(I.tg)&&isFinite(I.tt)&&I.tt>0;el.innerHTML=ok?`규격: 중량 <b>${f0(I.tg-(+I.gTol||0))} ~ ${f0(I.tg+(+I.gTol||0))} gsm</b>, 두께 <b>${f2(I.tt-(+I.tTol||0))} ~ ${f2(I.tt+(+I.tTol||0))} t</b> · 목표 밀도 <b>${(I.tg/I.tt*0.001).toFixed(3)} g/cm³</b> (= 중량 ÷ 두께 × 0.001)`:''}
+function resize(b){const G=ST.grid[b];['g','t'].forEach(k=>{const old=G[k]||[];G[k]=Array.from({length:ST.lots[b]},(_,l)=>Array.from({length:ST.n[b]},(_,p)=>old[l]?.[p]??null))})}
+// ---------- data grids ----------
+let curB=0;
+function drawGrids(){
+  const b=curB,L=ST.lots[b],n=ST.n[b],G=ST.grid[b];
+  let h=`<div class="bsel">${[0,1].map(i=>`<button class="${i===b?'on':''}" data-bb="${i}">${esc(ST.names[i])} (${ST.lots[i]}로트×${ST.n[i]}개)</button>`).join('')}<span class="hint">엑셀에서 여러 칸을 복사해 첫 칸에 붙여넣기(Ctrl+V)하면 한 번에 입력됩니다. Enter/방향키로 이동.</span></div>`;
+  [['g','중량 (gsm)','1'],['t','두께 (t)','0.01']].forEach(([k,nm,st])=>{
+    const vals=G[k].flat().filter(v=>v!=null&&v!=='');const cnt=vals.length;
+    h+=`<h3>${esc(ST.names[b])} ${nm} <small>${cnt} / ${L*n}개 입력</small> <button class="mini" data-clear="${k}">이 표 지우기</button></h3><div class="gwrap"><table class="grid"><tr><th>로트＼시편</th>${Array.from({length:n},(_,p)=>`<th>${p+1}</th>`).join('')}</tr>`;
+    for(let l=0;l<L;l++){h+=`<tr><th>${l+1}로트</th>`;for(let p=0;p<n;p++){const v=G[k][l][p];h+=`<td><input data-k="${k}" data-l="${l}" data-p="${p}" inputmode="decimal" value="${v==null?'':(k==='t'?(+v).toFixed(2):v)}"></td>`}h+='</tr>'}
+    h+='</table></div>'});
+  $('#pData').innerHTML=h;
+  $('#pData').querySelectorAll('[data-bb]').forEach(x=>x.onclick=()=>{curB=+x.dataset.bb;drawGrids()});
+  $('#pData').querySelectorAll('[data-clear]').forEach(x=>x.onclick=()=>{if(!x.dataset.ok){x.dataset.ok=1;x.textContent='한 번 더 누르면 지워집니다';setTimeout(()=>{delete x.dataset.ok;x.textContent='이 표 지우기'},3000);return}G[x.dataset.clear]=G[x.dataset.clear].map(r=>r.map(()=>null));autosave();drawGrids()});
+  $('#pData').querySelectorAll('input[data-k]').forEach(i=>{
+    i.oninput=()=>{const v=i.value.trim().replace(',','.');G[i.dataset.k][+i.dataset.l][+i.dataset.p]=v===''||isNaN(+v)?null:+v;i.classList.toggle('bad',v!==''&&isNaN(+v));autosave()};
+    i.onpaste=e=>{const txt=(e.clipboardData||window.clipboardData).getData('text');if(!/[\t\n]/.test(txt.trim()))return;e.preventDefault();
+      const rows=txt.replace(/\r/g,'').replace(/\n$/,'').split('\n').map(r=>r.split('\t'));const k=i.dataset.k,l0=+i.dataset.l,p0=+i.dataset.p;let c=0;
+      rows.forEach((r,dl)=>r.forEach((v,dp)=>{const l=l0+dl,p=p0+dp;if(l<L&&p<n){const s=v.trim().replace(',','.');G[k][l][p]=s===''||isNaN(+s)?null:+s;c++}}));autosave();drawGrids();msg(c+'개 칸을 붙여넣었습니다')};
+    i.onkeydown=e=>{const l=+i.dataset.l,p=+i.dataset.p,k=i.dataset.k;let t=null;
+      if(e.key==='Enter'||e.key==='ArrowDown')t=[l+1,p];else if(e.key==='ArrowUp')t=[l-1,p];else if(e.key==='ArrowRight'&&i.selectionStart===i.value.length)t=[l,p+1];else if(e.key==='ArrowLeft'&&i.selectionStart===0)t=[l,p-1];
+      if(t){const x=$(`#pData input[data-k="${k}"][data-l="${t[0]}"][data-p="${t[1]}"]`);if(x){e.preventDefault();x.focus();x.select()}}};
+  });
+}
+// ---------- texts ----------
+function drawTexts(){const T=ST.texts;const ev=['중량','두께','밀도','중량 규격 이내','두께 규격 이내','중량·두께 모두 규격 이내','관리한계 이탈','표면 상태','웹 밀림'],lk=['표면 상태 - 차수1','표면 상태 - 차수2','웹 밀림 - 차수1','웹 밀림 - 차수2'];
+  let h='<p class="hint">비워 두면 보고서에 수치로 만든 자동 문구가 들어갑니다. 달성/과제는 한 줄에 한 항목, "제목: 내용" 형식으로 쓰면 제목이 굵게 표시됩니다.</p>';
+  h+=`<label class="full">결론<textarea data-x="verdict" rows="5">${esc(T.verdict||'')}</textarea></label>`;
+  h+='<h3>요약표 평가 칸</h3><div class="form">'+ev.map((l,i)=>`<label>${l}<input data-x="eval" data-i="${i}" value="${esc(T.eval[i]||'')}"></label>`).join('')+'</div>';
+  h+='<h3>외관 상태 (차수별)</h3><div class="form">'+lk.map((l,i)=>`<label>${l.replace('차수1',ST.names[0]).replace('차수2',ST.names[1])}<input data-x="look" data-i="${i}" value="${esc(T.look[i]||'')}"></label>`).join('')+'</div>';
+  h+=`<div class="form2"><label>✔ 달성된 것<textarea data-x="done" rows="6">${esc(T.done||'')}</textarea></label><label>▲ 남은 과제<textarea data-x="todo" rows="6">${esc(T.todo||'')}</textarea></label></div>`;
+  h+='<h3>다음 조치</h3><table class="cfg"><tr><th>No</th><th>조치 내용</th><th>기대 효과</th></tr>'+T.act.map((a,i)=>`<tr><td>${i+1}</td><td><input data-x="act" data-i="${i}" data-j="0" value="${esc(a[0]||'')}"></td><td><input data-x="act" data-i="${i}" data-j="1" value="${esc(a[1]||'')}"></td></tr>`).join('')+'</table><button class="mini" id="addAct">조치 행 추가</button>';
+  $('#pText').innerHTML=h;
+  $('#pText').querySelectorAll('[data-x]').forEach(x=>x.oninput=()=>{const k=x.dataset.x;if(k==='eval'||k==='look')T[k][+x.dataset.i]=x.value;else if(k==='act')T.act[+x.dataset.i][+x.dataset.j]=x.value;else T[k]=x.value;autosave()});
+  $('#addAct').onclick=()=>{T.act.push(['','']);drawTexts();autosave()};
+}
+// ---------- preview & export ----------
+function preview(){const D=toD(ST);const bad=[0,1].filter(b=>!D.data[b].some(x=>x[0]!=null||x[1]!=null));
+  if(bad.length){$('#rep').innerHTML='<p style="padding:40px;text-align:center;color:#b42318">'+bad.map(b=>esc(ST.names[b])).join(', ')+' 데이터가 비어 있습니다. ② 시편 데이터 탭에서 입력해 주세요.</p>';return false}
+  try{render(D);return true}catch(e){$('#rep').innerHTML='<p style="color:#b42318">보고서를 만들 수 없습니다: '+esc(e.message)+'</p>';return false}}
+let dl=null;(async()=>{try{dl=window.claude&&window.claude.use?await window.claude.use('downloads'):null}catch(e){}})();
+async function saveFile(name,blob){
+  if(dl){try{await dl.save({filename:name,data:blob});msg('저장했습니다: '+name)}catch(e){msg(e&&e.code==='declined'?'저장을 취소했습니다':'저장 실패: '+(e&&e.message||e))}return}
+  try{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},2000);msg('저장했습니다: '+name)}catch(e){msg('이 화면에서는 다운로드가 차단되었습니다')}}
+const fname=ext=>`${(ST.info.prd||'OxyFelt').replace(/[\\/:*?"<>|]/g,'')}_조건셋업_보고서_${(ST.info.date||new Date().toISOString().slice(0,10))}.${ext}`;
+async function chartsToImages(root){const swaps=[];for(const d of root.querySelectorAll('.js-plotly-plot')){try{const url=await Plotly.toImage(d,{format:'png',scale:2,width:d.clientWidth,height:d.clientHeight});const img=new Image();img.src=url;img.style.width=d.clientWidth+'px';img.style.height=d.clientHeight+'px';img.style.display='block';await img.decode().catch(()=>{});d.style.display='none';d.parentNode.insertBefore(img,d);swaps.push([d,img])}catch(e){}}return()=>swaps.forEach(([d,img])=>{img.remove();d.style.display=''})}
+function busy(on,t){$('#busy').hidden=!on;if(t)$('#busyT').textContent=t}
+async function prepare(){tab('pPrev');if(!preview())throw new Error('데이터를 먼저 입력해 주세요');await new Promise(r=>setTimeout(r,700));const rep=$('#rep');rep.classList.add('exporting');await new Promise(r=>setTimeout(r,300));
+  window.dispatchEvent(new Event('resize'));await new Promise(r=>setTimeout(r,500));const restore=await chartsToImages(rep);return()=>{restore();rep.classList.remove('exporting');window.dispatchEvent(new Event('resize'))}}
+async function exportPNG(){if(!window.html2canvas)return msg('이미지 변환 모듈을 불러오지 못했습니다(인터넷 연결 확인)');busy(true,'이미지 만드는 중…');let restore=()=>{};
+  try{restore=await prepare();const c=await html2canvas($('#rep'),{scale:2,backgroundColor:'#ffffff',useCORS:true,logging:false});const blob=await new Promise(r=>c.toBlob(r,'image/png'));restore();restore=()=>{};busy(false);await saveFile(fname('png'),blob)}
+  catch(e){msg('이미지 만들기 실패: '+e.message)}finally{restore();busy(false)}}
+async function exportPDF(){if(!window.html2canvas||!window.jspdf)return msg('PDF 변환 모듈을 불러오지 못했습니다(인터넷 연결 확인)');busy(true,'PDF 만드는 중…');let restore=()=>{};
+  try{restore=await prepare();const {jsPDF}=window.jspdf;const pdf=new jsPDF({unit:'mm',format:'a4',orientation:'portrait'});
+    const PW=210,PH=297,M=10,W=PW-2*M,H=PH-2*M;let y=M,first=true;
+    const blocks=[];$('#rep').querySelectorAll(':scope > header, :scope > section > *').forEach(el=>{if(el.tagName==='FIGURE'&&el.querySelector('.g2')&&el.querySelectorAll('.g2 > *').length>2){blocks.push(el)}else blocks.push(el)});
+    for(let i=0;i<blocks.length;i++){const el=blocks[i];busy(true,`PDF 만드는 중… (${i+1}/${blocks.length})`);
+      const c=await html2canvas(el,{scale:2,backgroundColor:'#ffffff',useCORS:true,logging:false});const hmm=c.height*W/c.width;
+      const keepNext=/^H2$/.test(el.tagName);
+      let need=hmm; if(keepNext&&blocks[i+1]){need+=Math.min(60,blocks[i+1].offsetHeight*W/el.offsetWidth)}
+      if(y+need>M+H&&y>M+1){pdf.addPage();y=M}
+      if(hmm<=H){pdf.addImage(c.toDataURL('image/jpeg',0.92),'JPEG',M,y,W,hmm);y+=hmm+2}
+      else{const pxPerMm=c.width/W;let off=0;while(off<c.height){const sliceH=Math.min(c.height-off,Math.floor((M+H-y)*pxPerMm));const s=document.createElement('canvas');s.width=c.width;s.height=sliceH;s.getContext('2d').drawImage(c,0,off,c.width,sliceH,0,0,c.width,sliceH);
+        pdf.addImage(s.toDataURL('image/jpeg',0.92),'JPEG',M,y,W,sliceH/pxPerMm);off+=sliceH;y+=sliceH/pxPerMm+2;if(off<c.height){pdf.addPage();y=M}}}}
+    const n=pdf.getNumberOfPages();for(let p=1;p<=n;p++){pdf.setPage(p);pdf.setFontSize(8);pdf.setTextColor(150);pdf.text(`${p} / ${n}`,PW/2,PH-4,{align:'center'})}
+    const blob=pdf.output('blob');restore();restore=()=>{};busy(false);await saveFile(fname('pdf'),blob)}
+  catch(e){msg('PDF 만들기 실패: '+e.message)}finally{restore();busy(false)}}
+$('#bPNG').onclick=exportPNG;$('#bPDF').onclick=exportPDF;
+// ---------- work file ----------
+$('#bSave').onclick=()=>saveFile(fname('json').replace('_보고서_','_작업_'),new Blob([JSON.stringify({app:'oxyfelt-report',ver:APP_VERSION,state:ST},null,1)],{type:'application/json'}));
+$('#fJson').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const o=JSON.parse(await f.text());if(!o.state)throw new Error('작업 파일 형식이 아닙니다');ST=o.state;ensureTexts();drawAll();autosave();msg('작업을 불러왔습니다: '+f.name)}catch(err){msg('불러오기 실패: '+err.message)}e.target.value=''};
+$('#fXlsx').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{if(!window.XLSX||!XLSX.read)throw new Error('엑셀 모듈을 불러오지 못했습니다');const D=readXlsx(new Uint8Array(await f.arrayBuffer()));const t=D.texts&&Object.keys(D.texts).length?D.texts:ST.texts;ST=fromD({...D,texts:t});ensureTexts();drawAll();autosave();msg('엑셀을 불러왔습니다: '+f.name)}catch(err){msg('엑셀 불러오기 실패: '+err.message)}e.target.value=''};
+$('#bNew').onclick=()=>{const x=$('#bNew');if(!x.dataset.ok){x.dataset.ok=1;x.textContent='정말 새로 시작? 한 번 더';setTimeout(()=>{delete x.dataset.ok;x.textContent='새로 시작'},3000);return}
+  ST={names:['1차','2차'],lots:[5,5],n:[10,10],info:{prd:'',date:new Date().toISOString().slice(0,10),author:'',tg:ST.info.tg,tt:ST.info.tt,gTol:ST.info.gTol,tTol:ST.info.tTol,memo1:'',memo2:''},grid:[0,1].map(()=>({g:Array.from({length:5},()=>Array(10).fill(null)),t:Array.from({length:5},()=>Array(10).fill(null))})),texts:{},checks:ST.checks.map(c=>({item:c.item,std:c.std,r1:'',r2:'',judge:''})),caution:ST.caution};ensureTexts();drawAll();autosave();delete x.dataset.ok;x.textContent='새로 시작';msg('빈 양식으로 시작합니다(목표값은 유지)')};
+$('#bEx').onclick=()=>{ST=fromD(DEF);ensureTexts();drawAll();autosave();msg('예시 데이터를 불러왔습니다')};
+// ---------- version ----------
+$('#ver').textContent='v'+APP_VERSION;
+$('#ver').onclick=()=>{$('#log').hidden=!$('#log').hidden};
+$('#log').innerHTML='<b>업데이트 내역</b><ul>'+CHANGELOG.map(([v,d,t])=>`<li><b>v${v}</b> (${d}) ${esc(t)}</li>`).join('')+'</ul><p class="hint">관리자가 새 버전을 배포하면 이 링크를 여는 모든 사용자에게 자동 적용됩니다. 입력한 데이터는 각자의 브라우저에 자동 저장되며 업데이트 후에도 유지됩니다.</p>';
+if(saved&&saved.ver&&saved.ver!==APP_VERSION){setTimeout(()=>msg(`v${APP_VERSION}(으)로 업데이트되었습니다. 업데이트 내역은 버전 표시를 누르세요.`),600)}
+function drawAll(){drawSettings();drawTexts();if(!$('#pData').hidden)drawGrids();if(!$('#pPrev').hidden)preview()}
+drawSettings();drawTexts();tab('pData');
+
+// ---------- 새 버전 확인 (웹 호스팅 시) ----------
+(function(){if(!/^https?:/.test(location.protocol)||/claude/.test(location.hostname))return;
+  const chk=async()=>{try{const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const v=await r.json();
+    if(v.version&&v.version!==APP_VERSION&&!document.getElementById('upd')){const d=document.createElement('div');d.id='upd';
+      d.innerHTML=`새 버전 v${esc(v.version)}이 배포되었습니다. ${esc(v.note||'')} <button>지금 적용(새로고침)</button>`;d.querySelector('button').onclick=()=>location.reload();document.body.prepend(d)}}catch(e){}};
+  setTimeout(chk,3000);setInterval(chk,10*60*1000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)chk()})})();
+
+</script></body></html>
