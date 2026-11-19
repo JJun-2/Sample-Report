@@ -8,31 +8,35 @@
 <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
 <style>
 
-body{font-family:'Noto Sans KR','Malgun Gothic',sans-serif;color:#1d2530;background:#f4f5f7;margin:0;line-height:1.65}
+body{font-family:'Noto Sans KR','Malgun Gothic',sans-serif;color:#1d2530;background:#f4f5f7;margin:0;line-height:1.7;font-size:16px}
 .wrap{max-width:960px;margin:0 auto;background:#fff;padding:28px 40px 48px}
 .bar{position:sticky;top:0;background:#fff;border-bottom:1px solid #e3e6ea;padding:10px 40px;display:flex;gap:8px;flex-wrap:wrap;z-index:5;max-width:960px;margin:0 auto;align-items:center}
 .bar button,.bar label{border:1px solid #2F6FB0;background:#fff;color:#2F6FB0;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:13px;font-family:inherit}
 .bar .p{background:#2F6FB0;color:#fff} #msg{font-size:13px;color:#2a7d3b} #src{font-size:12px;color:#667;margin-left:auto}
 header{border-bottom:3px solid #2F6FB0;padding-bottom:12px;margin-bottom:8px}
-.tag{color:#2F6FB0;font-weight:700;font-size:13px} h1{margin:4px 0;font-size:24px} .meta{color:#667;font-size:13px;margin:0}
-h2{font-size:18px;border-left:4px solid #2F6FB0;padding-left:10px;margin-top:34px}
-table{border-collapse:collapse;width:100%;font-size:13px;margin:8px 0} th,td{border:1px solid #dde1e6;padding:5px 6px;text-align:center}
-th{background:#f1f3f6} .raw td{font-size:12px;line-height:1.3} .raw small{color:#D9822B}
+.tag{color:#2F6FB0;font-weight:700;font-size:15px} h1{margin:4px 0;font-size:29px} .meta{color:#556;font-size:15px;margin:0}
+h2{font-size:22px;border-left:4px solid #2F6FB0;padding-left:10px;margin-top:34px}
+table{border-collapse:collapse;width:100%;font-size:15px;margin:10px 0} th,td{border:1px solid #cfd5dc;padding:7px 7px;text-align:center}
+th{background:#f1f3f6} .raw td{font-size:14px;line-height:1.35} .raw small{color:#B4570F;font-size:13px;font-weight:500}
 td.lo{color:#b42318;font-weight:700} td.hi{color:#1f5fa6;font-weight:700} td.mid{color:#b26a00;font-weight:700} td.ok{color:#2a7d3b;font-weight:700}
 .sum td:last-child,.act td:nth-child(2),.act td:nth-child(3){text-align:left}
-figure{margin:14px 0} figcaption,.cap{font-size:12px;color:#667}
-.verdict{background:#eef4fb;border-left:5px solid #2F6FB0;padding:12px 16px;margin:10px 0 14px;font-size:14.5px;white-space:pre-line}
+figure{margin:14px 0} figcaption,.cap{font-size:14px;color:#556}
+.verdict{background:#eef4fb;border-left:6px solid #2F6FB0;padding:14px 18px;margin:10px 0 16px;font-size:17px;white-space:pre-line}
 .verdict b.k{display:inline-block;background:#2F6FB0;color:#fff;padding:1px 8px;border-radius:4px;margin-right:8px}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px} .box{border:1px solid #dde1e6;border-radius:8px;padding:4px 14px;font-size:13.5px} .box h4{margin:10px 0 0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px} .box{border:1px solid #cfd5dc;border-radius:8px;padding:4px 16px;font-size:15.5px} .box h4{margin:10px 0 0;font-size:17px}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:6px} .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px}
-.ch{width:100%;height:300px} .ch.s{height:270px} .ch.t{height:340px} .ch.h{height:230px}
-.auto{color:#8a6d00;font-size:11px;margin-left:6px}
+.ch{width:100%;height:350px} .ch.s{height:330px} .ch.t{height:430px} .ch.h{height:260px} .g3{gap:8px}
+.auto{color:#8a6d00;font-size:12.5px;margin-left:6px}
 @media(max-width:700px){.wrap,.bar{padding-left:16px;padding-right:16px}.grid2,.g2,.g3{grid-template-columns:1fr}}
 @media print{.bar{display:none}.wrap{padding:0;max-width:none}body{background:#fff}section{break-inside:auto}figure{break-inside:avoid}}
 
-.caution{border:1px solid #f0c36d;background:#fff8e6;border-radius:8px;padding:6px 14px 10px;margin:12px 0;font-size:13.5px}.caution h4{margin:8px 0 4px;color:#9a6200}.caution p{margin:4px 0 8px}.caution table{background:#fff}
+.caution{border:1px solid #f0c36d;background:#fff8e6;border-radius:8px;padding:6px 16px 12px;margin:14px 0;font-size:15.5px}.caution h4{margin:8px 0 4px;color:#9a6200}.caution p{margin:4px 0 8px}.caution table{background:#fff}
 
-.notes{border:1px solid #dde1e6;background:#f8fafc;border-radius:8px;padding:6px 14px 10px;margin:12px 0;font-size:13.5px}.notes h4{margin:8px 0 4px;color:#2F6FB0}.notes table{background:#fff}.notes td{text-align:left}
+.notes{border:1px solid #dde1e6;background:#f8fafc;border-radius:8px;padding:6px 16px 12px;margin:14px 0;font-size:15.5px}.notes h4{margin:8px 0 4px;color:#2F6FB0}.notes table{background:#fff}.notes td{text-align:left}
+
+.ana{border:1px solid #c9d9ee;background:#f5f9ff;border-radius:8px;padding:6px 16px 10px;margin:12px 0;font-size:15.5px}.ana h4{margin:8px 0 4px;color:#2F6FB0;font-size:17px}.ana li{margin:4px 0}
+.gl td{text-align:left;font-size:14.5px;vertical-align:top}
+.caution h4,.notes h4{font-size:17px}
 
 .app{max-width:1040px;margin:0 auto;background:#fff;min-height:100vh}
 .top{position:sticky;top:0;z-index:10;background:#fff;border-bottom:1px solid #e3e6ea}
@@ -175,7 +179,17 @@ ${+I.dTol>0?`<tr><td>밀도 규격 이내 (${f3(A.tr-I.dTol)}~${f3(A.tr+I.dTol)}
     const inn=x=>tol?pct(x.filter(v=>Math.abs(v-tg)<=tol+1e-9).length/x.length,0):'—',ck=x=>tol?f2(cpk(x,tg,tol)):'—';
     h+=`<tr><td rowspan=2>${nm}</td><td>${esc(a.name)}</td><td>${x0.length}</td><td>${fm(s[0].m)}</td><td>${fs(s[0].s)}</td><td>${fm(s[0].mn)}</td><td>${fm(s[0].mx)}</td><td>${fm(s[0].mx-s[0].mn)}</td><td>${pct(s[0].cv,2)}</td><td>${inn(x0)}</td><td>${ck(x0)}</td></tr>
 <tr><td>${esc(b.name)}</td><td>${x1.length}</td><td>${fm(s[1].m)}</td><td>${fs(s[1].s)}</td><td>${fm(s[1].mn)}</td><td>${fm(s[1].mx)}</td><td>${fm(s[1].mx-s[1].mn)}</td><td>${pct(s[1].cv,2)}</td><td>${inn(x1)}</td><td>${ck(x1)}</td></tr>`});
-  h+=`</table><figure><div class="g3"><div id="f1a" class="ch s"></div><div id="f1b" class="ch s"></div><div id="f1c" class="ch s"></div></div><figcaption>그림 1. 차수별 분포 (초록 점선 = 목표, 빨강 = 규격 상한, 파랑 = 규격 하한). 차수 간 평균 차이(Welch t-검정): 중량 ${pv(pT[0])}, 두께 ${pv(pT[1])}, 밀도 ${pv(pT[2])}</figcaption></figure></section>`;
+  h+='</table>';
+  const cpG=[a,b].map(B=>cpk(B.G,I.tg,I.gTol)),cpT=[a,b].map(B=>cpk(B.T,I.tt,I.tTol)),cpR=[a,b].map(B=>cpk(B.R,A.tr,+I.dTol||0));
+  const cpTxt=v=>!isFinite(v)?'-':v>=1.33?'충분(양호)':v>=1?'보통 — 관리 강화 필요':v>=0?'부족 — 규격 이탈품 발생 가능':'평균이 규격 밖 — 중심값 보정 필요';
+  const cpF=(arr,tol)=>tol&&arr.length>1?(2*tol)/(6*sd(arr)):NaN;
+  const ana=[];
+  ana.push(`<b>산포(CV):</b> 중량 ${pct(S.g[0].cv)} → ${pct(S.g[1].cv)}, 두께 ${pct(S.t[0].cv)} → ${pct(S.t[1].cv)}, 밀도 ${pct(S.r[0].cv)} → ${pct(S.r[1].cv)}. ${S.g[1].cv<S.g[0].cv&&S.t[1].cv<S.t[0].cv?esc(b.name)+'에서 균일도가 좋아졌다.':esc(b.name)+'에서 산포가 줄지 않은 항목이 있어 원인 확인이 필요하다.'}`);
+  [['중량',b.G,I.tg,I.gTol,cpG[1]],['두께',b.T,I.tt,I.tTol,cpT[1]],['밀도',b.R,A.tr,+I.dTol||0,cpR[1]]].forEach(([nm,arr,tg,tol,ck])=>{if(!tol)return;const c_=cpF(arr,tol);
+    ana.push(`<b>${nm} 공정능력(${esc(b.name)}):</b> Cpk ${f2(ck)} → ${cpTxt(ck)}.${isFinite(c_)&&c_-ck>0.2?` 산포만 보면 Cp ${f2(c_)}이므로, 평균을 목표값으로 옮기면 Cpk를 ${f2(c_)} 가까이까지 높일 수 있다.`:''}`)});
+  ana.push(`<b>차수 간 차이:</b> Welch t-검정 결과 중량 ${pv(pT[0])}, 두께 ${pv(pT[1])}, 밀도 ${pv(pT[2])}. p값이 0.05보다 작으면 두 차수의 평균 차이는 우연이 아니라 조건 변경의 효과로 볼 수 있다.`);
+  h+=`<div class="ana"><h4>🔎 분석</h4><ul>${ana.map(x=>`<li>${x}</li>`).join('')}</ul></div>`;
+  h+=`<figure><div class="g3"><div id="f1a" class="ch s"></div><div id="f1b" class="ch s"></div><div id="f1c" class="ch s"></div></div><figcaption>그림 1. 차수별 분포 (초록 점선 = 목표, 빨강 = 규격 상한, 파랑 = 규격 하한). 차수 간 평균 차이(Welch t-검정): 중량 ${pv(pT[0])}, 두께 ${pv(pT[1])}, 밀도 ${pv(pT[2])}</figcaption></figure></section>`;
   // 2
   h+=`<section><h2>2. 두께-중량 상관</h2><figure><div id="f2" class="ch t" style="max-width:660px"></div><figcaption>그림 2. 상관계수 ${esc(a.name)} ${f2(a.r)} → ${esc(b.name)} ${f2(b.r)}. ${esc(b.name)} 추세식 기준 목표 중량(${f0(I.tg)} gsm)일 때 예상 두께 ${f2(b.pred)} t (★ = 목표)</figcaption></figure></section>`;
   // 3
@@ -187,14 +201,26 @@ ${+I.dTol>0?`<tr><td>밀도 규격 이내 (${f3(A.tr-I.dTol)}~${f3(A.tr+I.dTol)}
   for(let i=0;i<Lm;i++){const x=a.byLot[i]||{},y=b.byLot[i]||{};h+=`<tr><td>${i+1}로트</td><td class="${cl(x.g,eg1)}">${f0(x.g)}</td><td class="${cl(x.t,et1)}">${f2(x.t)}</td><td class="${cl(y.g,eg2)}">${f0(y.g)}</td><td class="${cl(y.t,et2)}">${f2(y.t)}</td></tr>`}
   h+=`<tr><th>로트 간 차이</th><th>${f0(eg1[0]-eg1[1])}</th><th>${f2(et1[0]-et1[1])}</th><th>${f0(eg2[0]-eg2[1])}</th><th>${f2(et2[0]-et2[1])}</th></tr></table>
 <figure><div class="g2"><div id="f3a" class="ch"></div><div id="f3b" class="ch"></div></div><figcaption>그림 3. 로트별 평균과 표준편차(오차막대), 초록 점선 = 목표</figcaption></figure>
-<figure><div class="g2"><div id="f4a" class="ch"></div><div id="f4b" class="ch"></div><div id="f4c" class="ch"></div><div id="f4d" class="ch"></div></div><figcaption>그림 4. 위치별 히트맵 (행 = 로트, 열 = 시편 번호, 색이 진할수록 큼)</figcaption></figure></section>`;
+<figure><div id="f4a" class="ch"></div><div id="f4c" class="ch"></div><div id="f4b" class="ch"></div><div id="f4d" class="ch"></div><figcaption>그림 4. 위치별 히트맵 (행 = 로트, 열 = 시편 번호, 색이 진할수록 큼)</figcaption></figure></section>`;
   // 4
-  h+=`<section><h2>4. 공정 안정성 (개별값 관리도)</h2><figure><div class="g2"><div id="f5a" class="ch" style="height:270px"></div><div id="f5b" class="ch" style="height:270px"></div><div id="f5c" class="ch" style="height:270px"></div><div id="f5d" class="ch" style="height:270px"></div></div><figcaption>그림 5. 차수·항목별 개별값 관리도 — 초록 점선: 목표, 연두 영역·빨강/파랑 일점쇄선: 규격 범위(상한/하한), 빨강/파랑 점선: 관리 상한(UCL)/하한(LCL), 회색 실선: 평균, 빨간 원: 관리한계 이탈. 세로 점선은 로트 경계이며, 같은 항목은 차수 간 세로축 범위를 맞춰 비교할 수 있게 했다.</figcaption></figure>
+  h+=`<section><h2>4. 공정 안정성 (개별값 관리도)</h2><figure><div class="g2"><div id="f5a" class="ch" style="height:320px"></div><div id="f5b" class="ch" style="height:320px"></div><div id="f5c" class="ch" style="height:320px"></div><div id="f5d" class="ch" style="height:320px"></div></div><figcaption>그림 5. 차수·항목별 개별값 관리도 — 초록 점선: 목표, 연두 영역·빨강/파랑 일점쇄선: 규격 범위(상한/하한), 빨강/파랑 점선: 관리 상한(UCL)/하한(LCL), 회색 실선: 평균, 빨간 원: 관리한계 이탈. 세로 점선은 로트 경계이며, 같은 항목은 차수 간 세로축 범위를 맞춰 비교할 수 있게 했다.</figcaption></figure>
 <table><tr><th>차수</th><th>항목</th><th>관리한계</th><th>한계 이탈 시료</th><th>개수</th></tr>
 <tr><td rowspan=2>${esc(a.name)}</td><td>중량</td><td>${f0(a.lg.lcl)} ~ ${f0(a.lg.ucl)} gsm</td><td>${a.outG.map(lab).join(', ')||'없음'}</td><td>${a.outG.length}</td></tr>
 <tr><td>두께</td><td>${f2(a.lt.lcl)} ~ ${f2(a.lt.ucl)} t</td><td>${a.outT.map(lab).join(', ')||'없음'}</td><td>${a.outT.length}</td></tr>
 <tr><td rowspan=2>${esc(b.name)}</td><td>중량</td><td>${f0(b.lg.lcl)} ~ ${f0(b.lg.ucl)} gsm</td><td>${b.outG.map(lab).join(', ')||'없음'}</td><td>${b.outG.length}</td></tr>
 <tr><td>두께</td><td>${f2(b.lt.lcl)} ~ ${f2(b.lt.ucl)} t</td><td>${b.outT.map(lab).join(', ')||'없음'}</td><td>${b.outT.length}</td></tr></table></section>`;
+  // glossary
+  const GL=[['평균','측정값의 산술 평균. 목표값과의 차이로 중심이 맞는지 본다.'],['표준편차','값들이 평균에서 얼마나 흩어져 있는지 나타내는 값. 작을수록 고르다.'],
+   ['CV (변동계수)','표준편차 ÷ 평균 × 100(%). 단위가 다른 항목끼리 산포를 비교할 때 쓴다. 작을수록 균일하다.'],
+   ['범위','최댓값 − 최솟값.'],['규격 이내','목표 ± 허용범위 안에 든 시료의 비율.'],
+   ['Cp (공정능력지수)','(규격 상한 − 규격 하한) ÷ (6 × 표준편차). 산포만으로 본 잠재 능력으로, 평균이 목표에서 벗어난 것은 반영하지 않는다.'],
+   ['Cpk (공정능력지수)','min(규격 상한 − 평균, 평균 − 규격 하한) ÷ (3 × 표준편차). 산포와 중심 치우침을 함께 반영한 실제 능력. 일반적으로 1.33 이상이면 양호, 1.00~1.33은 보통(관리 강화), 1.00 미만은 개선이 필요한 수준으로 본다. 음수이면 평균이 규격 밖에 있다는 뜻이다.'],
+   ['밀도','중량(gsm) ÷ 두께(mm) × 0.001 = g/cm³. 같은 두께에 섬유가 얼마나 조밀하게 들어 있는지 나타낸다.'],
+   ['p값 (Welch t-검정)','두 차수의 평균 차이가 우연히 생겼을 확률. 0.05보다 작으면 차이가 통계적으로 유의하다고 본다.'],
+   ['개별값 관리도 (I-Chart)','시료를 측정 순서대로 찍어 공정이 안정적인지 보는 그래프.'],
+   ['MR (이동범위)','연속한 두 시료 값의 차이. 평균 MR(MR̄)로 관리한계를 계산한다.'],
+   ['UCL / LCL (관리 상한/하한)','평균 ± 2.66 × MR̄. 이 범위를 벗어난 점은 우연이 아닌 원인(설비·원료·작업 변화 등)이 있을 가능성이 크다. 고객이 정한 규격 상·하한과는 다른 개념이다.']];
+  h+=`<section><h2>용어 설명</h2><table class="gl"><tr><th style="width:24%">용어</th><th>뜻</th></tr>${GL.map(([k,v])=>`<tr><td><b>${k}</b></td><td>${v}</td></tr>`).join('')}</table></section>`;
   // appendix
   h+=`<section><h2>부록. 원데이터 (칸 안: 중량 gsm / 두께 t)</h2>`;
   [a,b].forEach(B=>{h+=`<h3 style="font-size:14px;margin:18px 0 6px">${esc(B.name)}</h3><table class="raw"><tr><th>로트＼시편</th>`+Array.from({length:B.n},(_,i)=>`<th>${i+1}</th>`).join('')+'</tr>';
@@ -203,11 +229,12 @@ ${+I.dTol>0?`<tr><td>밀도 규격 이내 (${f3(A.tr-I.dTol)}~${f3(A.tr+I.dTol)}
   $('#rep').innerHTML=h; charts(A,S);
 }
 // ---------- charts ----------
-const base=(o={})=>Object.assign({font:{family:FONT,size:11,color:'#1d2530'},margin:{l:52,r:14,t:34,b:40},paper_bgcolor:'#fff',plot_bgcolor:'#fff',showlegend:false,
+const base=(o={})=>Object.assign({font:{family:FONT,size:13.5,color:'#1d2530'},margin:{l:52,r:14,t:34,b:40},paper_bgcolor:'#fff',plot_bgcolor:'#fff',showlegend:false,
   xaxis:{showline:true,linecolor:'#333',gridcolor:'rgba(0,0,0,.08)',zeroline:false,ticks:'outside'},yaxis:{showline:true,linecolor:'#333',gridcolor:'rgba(0,0,0,.08)',zeroline:false,ticks:'outside'}},o);
+const HB=[[0,'#EEF4FC'],[0.5,'#7FA7DC'],[1,'#123F8C']],HO=[[0,'#FDE9D6'],[0.5,'#E8803A'],[1,'#8A2E05']];
 const cfg={displayModeBar:false,responsive:true,staticPlot:false};
 const hline=(y,x0=0,x1=1,col=CT,dash='dash',w=1.3,xref='paper')=>({type:'line',xref,x0,x1,y0:y,y1:y,line:{color:col,dash,width:w}});
-const title=t=>({text:t,font:{size:13},x:.5});
+const title=t=>({text:t,font:{size:16,color:'#1d2530'},x:.5});
 const rgba=(c,a)=>{const n=parseInt(c.slice(1),16);return`rgba(${n>>16},${n>>8&255},${n&255},${a})`};
 function charts(A,S){
   const I=A.I,[a,b]=A.B,P=Plotly;
@@ -230,17 +257,17 @@ function charts(A,S){
   // fig3
   const Lm=Math.max(a.L,b.L),lots=Array.from({length:Lm},(_,i)=>`${i+1}로트`);
   [['f3a','g','gs','중량 (gsm)',I.tg],['f3b','t','ts','두께 (mm)',I.tt]].forEach(([id,k,ks,nm,tg],j)=>{
-    const tr=[[a,C1],[b,C2]].map(([B,c])=>({type:'bar',name:B.name,x:lots,y:lots.map((_,i)=>B.byLot[i]?B.byLot[i][k]:null),error_y:{type:'data',array:lots.map((_,i)=>B.byLot[i]?B.byLot[i][ks]||0:0),color:'#333',thickness:1.2,width:3},marker:{color:c,opacity:.8}}));
-    const all=[a,b].flatMap(B=>B.byLot.map(x=>x[k])).filter(isFinite);const lo=Math.min(mn(all),tg)*0.97,hi=Math.max(mx(all),tg)*1.01;
+    const tr=[[a,C1],[b,C2]].map(([B,c])=>({type:'bar',name:B.name,x:lots,y:lots.map((_,i)=>B.byLot[i]?B.byLot[i][k]:null),error_y:{type:'data',array:lots.map((_,i)=>B.byLot[i]?B.byLot[i][ks]||0:0),color:'#222',thickness:1.6,width:5},marker:{color:c,opacity:.85}}));
+    const tops=[a,b].flatMap(B=>B.byLot.filter(x=>isFinite(x[k])).map(x=>x[k]+(isFinite(x[ks])?x[ks]:0)));const bots=[a,b].flatMap(B=>B.byLot.filter(x=>isFinite(x[k])).map(x=>x[k]-(isFinite(x[ks])?x[ks]:0)));const hi0=Math.max(mx(tops),tg),lo0=Math.min(mn(bots),tg),pd=(hi0-lo0)*0.08;const lo=lo0-pd*1.5,hi=hi0+pd;
     tr.push({type:'scatter',mode:'lines',x:[lots[0],lots[Lm-1]],y:[tg,tg],name:'목표',line:{color:CT,dash:'dash',width:1.3},hoverinfo:'skip'});
-    P.newPlot(id,tr,base({title:title(`로트별 평균 ${nm} (오차막대=표준편차)`),barmode:'group',bargap:.25,showlegend:j===0,legend:{orientation:'h',x:0,y:1.0,yanchor:'bottom',bgcolor:'rgba(0,0,0,0)'},yaxis:{range:[lo,hi],showline:true,linecolor:'#333',gridcolor:'rgba(0,0,0,.08)',ticks:'outside'},shapes:[hline(tg)],margin:{l:52,r:10,t:52,b:36}}),cfg)});
+    P.newPlot(id,tr,base({title:title(`로트별 평균 ${nm}`),barmode:'group',bargap:.25,showlegend:true,legend:{orientation:'h',x:0,y:1.0,yanchor:'bottom',bgcolor:'rgba(0,0,0,0)',font:{size:13}},yaxis:{range:[lo,hi],showline:true,linecolor:'#333',gridcolor:'rgba(0,0,0,.08)',ticks:'outside'},shapes:[hline(tg,0,1,CT,'dash',1.8)],margin:{l:60,r:10,t:62,b:40}}),cfg)});
   // fig4 heatmaps
-  [['f4a',a,'g','Blues',`${a.name} 중량 (gsm) 분포`,0],['f4b',a,'t','Oranges',`${a.name} 두께 (mm) 분포`,2],['f4c',b,'g','Blues',`${b.name} 중량 (gsm) 분포`,0],['f4d',b,'t','Oranges',`${b.name} 두께 (mm) 분포`,2]].forEach(([id,B,k,cs,nm,d])=>{
+  [['f4a',a,'g',HB,`${a.name} 중량 (gsm) 분포`,0],['f4b',a,'t',HO,`${a.name} 두께 (mm) 분포`,2],['f4c',b,'g',HB,`${b.name} 중량 (gsm) 분포`,0],['f4d',b,'t',HO,`${b.name} 두께 (mm) 분포`,2]].forEach(([id,B,k,cs,nm,d])=>{
     const z=Array.from({length:B.L},(_,l)=>Array.from({length:B.n},(_,p)=>{const r=B.rows[l*B.n+p];return r&&r[k]!=null?r[k]:null}));
-    const fz=z.flat().filter(v=>v!=null),thr=fz.length?q(fz,.7):0;
-    const ann=[];z.forEach((row,l)=>row.forEach((v,p)=>{if(v!=null)ann.push({x:p+1,y:`${l+1}로트`,text:d?v.toFixed(2):String(Math.round(v)),showarrow:false,font:{size:B.n>12?7:9,color:v>=thr?'#fff':'#000'}})}));
-    P.newPlot(id,[{type:'heatmap',z,x:Array.from({length:B.n},(_,i)=>i+1),y:Array.from({length:B.L},(_,i)=>`${i+1}로트`),colorscale:cs,reversescale:false,xgap:0,ygap:0,colorbar:{thickness:10,len:.85},hoverongaps:false}],
-      base({title:title(nm),annotations:ann,xaxis:{dtick:1,showline:false,ticks:'',side:'bottom'},yaxis:{autorange:'reversed',showline:false,ticks:''},margin:{l:52,r:6,t:32,b:26}}),cfg)});
+    const fz=z.flat().filter(v=>v!=null),zmin=fz.length?mn(fz):0,zmax=fz.length?mx(fz):1,nz=v=>(v-zmin)/((zmax-zmin)||1);document.getElementById(id).style.height=(90+B.L*Math.max(34,Math.min(52,300/B.L)))+'px';
+    const ann=[];z.forEach((row,l)=>row.forEach((v,p)=>{if(v!=null)ann.push({x:p+1,y:`${l+1}로트`,text:d?v.toFixed(2):String(Math.round(v)),showarrow:false,font:{size:B.n>16?10:B.n>12?12:14,color:nz(v)>0.55?'#fff':'#111',family:FONT},captureevents:false})}));
+    P.newPlot(id,[{type:'heatmap',z,x:Array.from({length:B.n},(_,i)=>i+1),y:Array.from({length:B.L},(_,i)=>`${i+1}로트`),colorscale:cs,zmin,zmax,xgap:2,ygap:2,colorbar:{thickness:14,len:.9,tickfont:{size:12}},hoverongaps:false}],
+      base({title:title(nm),annotations:ann,xaxis:{dtick:1,showline:false,ticks:'',side:'bottom',title:{text:'시편 번호',font:{size:12}}},yaxis:{autorange:'reversed',showline:false,ticks:''},margin:{l:64,r:10,t:40,b:46}}),cfg)});
   // fig5 — 차수·항목별 분리 관리도
   const ranges={};
   [['g','lg',I.tg,I.gTol],['t','lt',I.tt,I.tTol]].forEach(([k,lk,tg,tol])=>{const v=[tg];if(tol)v.push(tg-tol,tg+tol);[a,b].forEach(B=>{B.seq.forEach(r=>{if(r[k]!=null)v.push(r[k])});v.push(B[lk].ucl,B[lk].lcl)});const lo=mn(v.filter(isFinite)),hi=mx(v.filter(isFinite)),pad=(hi-lo)*0.06||1;ranges[k]=[lo-pad,hi+pad]});
@@ -259,16 +286,16 @@ function charts(A,S){
     const lab2=lines.map(([y,t,col])=>({y,t,col,p:(y-y0)/(y1-y0)})).sort((p,q)=>p.p-q.p);const gap=0.085;
     for(let i=1;i<lab2.length;i++)if(lab2[i].p-lab2[i-1].p<gap)lab2[i].p=lab2[i-1].p+gap;
     const over=lab2.length?lab2[lab2.length-1].p-1:0;if(over>0){lab2.forEach(x=>x.p-=over);for(let i=lab2.length-2;i>=0;i--)if(lab2[i+1].p-lab2[i].p<gap)lab2[i].p=lab2[i+1].p-gap}
-    const ann=lab2.map(x=>({xref:'paper',yref:'paper',x:1.01,y:x.p,xanchor:'left',yanchor:'middle',showarrow:false,text:`${x.t} ${fm(x.y)}`,font:{size:9.5,color:x.col}}));
+    const ann=lab2.map(x=>({xref:'paper',yref:'paper',x:1.01,y:x.p,xanchor:'left',yanchor:'middle',showarrow:false,text:`${x.t} ${fm(x.y)}`,font:{size:12,color:x.col}}));
     const tickv=[],tickt=[];const step=Math.ceil(B.L/10);for(let l=0;l<B.L;l+=step){tickv.push(l*n0+(n0+1)/2);tickt.push(`${l+1}로트`)}
     P.newPlot(id,tr,base({title:title(`${B.name} ${nm}`),shapes:sh,annotations:ann,
       xaxis:{range:[0.3,Math.max(N,1)+0.7],tickvals:tickv,ticktext:tickt,showline:true,linecolor:'#333',showgrid:false,ticks:'outside'},
-      yaxis:{range:[y0,y1],showline:true,linecolor:'#333',gridcolor:'rgba(0,0,0,.06)',ticks:'outside',tickformat:k==='t'?'.2f':''},margin:{l:48,r:96,t:32,b:34}}),cfg)});
+      yaxis:{range:[y0,y1],showline:true,linecolor:'#333',gridcolor:'rgba(0,0,0,.06)',ticks:'outside',tickformat:k==='t'?'.2f':''},margin:{l:56,r:118,t:40,b:38}}),cfg)});
 }
 
 // ================= APP =================
-const APP_VERSION='1.4.0', APP_DATE='2026-11-19';
-const CHANGELOG=[['1.4.0','2026-11-19','첫 화면을 ① 기본 설정으로 변경, 밀도 허용범위(± g/cm³) 입력 추가 및 규격 이내 비율·Cpk·그래프 규격선 표시'],['1.3.0','2026-11-19','개별값 관리도를 차수·항목별 4개 그래프로 분리(선 겹침 해소, 선 이름·값 라벨 표시, 규격 범위 음영, 로트 단위 눈금), 사진 인식 기능 제거'],['1.2.0','2026-11-19','그래프 색 변경(목표 초록 점선·상한 빨강·하한 파랑), 표면 상태·웹 밀림 → 「특이사항」 칸으로 분리(항목 추가·삭제 가능)'],['1.1.0','2026-11-19','중량·두께 허용범위(규격) 입력 추가 및 규격 이내 비율·Cpk 표시, 밀도(g/cm³ = 중량/두께×0.001, 소수점 3자리) 표시, 주의사항·추가 점검 기준 입력 및 보고서 반영'],['1.0.0','2026-11-19','최초 배포: 시편 데이터 입력, 보고서 미리보기, PNG·PDF 내보내기, 엑셀 양식 불러오기, 작업 저장/불러오기']];
+const APP_VERSION='1.5.0', APP_DATE='2026-11-19';
+const CHANGELOG=[['1.5.0','2026-11-20','보고서 글씨 크기 확대(임원 보고용), 로트별 평균 그래프 오차막대 잘림 수정, 히트맵 숫자 크게·색 대비 개선(두께 진한 색), 분포 비교에 자동 분석(CV·Cpk 해석) 추가, 용어 설명 표 추가'],['1.4.0','2026-11-19','첫 화면을 ① 기본 설정으로 변경, 밀도 허용범위(± g/cm³) 입력 추가 및 규격 이내 비율·Cpk·그래프 규격선 표시'],['1.3.0','2026-11-19','개별값 관리도를 차수·항목별 4개 그래프로 분리(선 겹침 해소, 선 이름·값 라벨 표시, 규격 범위 음영, 로트 단위 눈금), 사진 인식 기능 제거'],['1.2.0','2026-11-19','그래프 색 변경(목표 초록 점선·상한 빨강·하한 파랑), 표면 상태·웹 밀림 → 「특이사항」 칸으로 분리(항목 추가·삭제 가능)'],['1.1.0','2026-11-19','중량·두께 허용범위(규격) 입력 추가 및 규격 이내 비율·Cpk 표시, 밀도(g/cm³ = 중량/두께×0.001, 소수점 3자리) 표시, 주의사항·추가 점검 기준 입력 및 보고서 반영'],['1.0.0','2026-11-19','최초 배포: 시편 데이터 입력, 보고서 미리보기, PNG·PDF 내보내기, 엑셀 양식 불러오기, 작업 저장/불러오기']];
 const DEF=JSON.parse(document.getElementById('def').textContent);
 const KEY='oxyfelt-report-app-v1';
 function toGrid(list,L,n){const g=[],t=[];for(let l=0;l<L;l++){g.push([]);t.push([]);for(let p=0;p<n;p++){const x=list[l*n+p]||[null,null];g[l].push(x[0]);t[l].push(x[1])}}return{g,t}}
@@ -368,7 +395,7 @@ async function exportPNG(){if(!window.html2canvas)return msg('이미지 변환 �
 async function exportPDF(){if(!window.html2canvas||!window.jspdf)return msg('PDF 변환 모듈을 불러오지 못했습니다(인터넷 연결 확인)');busy(true,'PDF 만드는 중…');let restore=()=>{};
   try{restore=await prepare();const {jsPDF}=window.jspdf;const pdf=new jsPDF({unit:'mm',format:'a4',orientation:'portrait'});
     const PW=210,PH=297,M=10,W=PW-2*M,H=PH-2*M;let y=M,first=true;
-    const blocks=[];$('#rep').querySelectorAll(':scope > header, :scope > section > *').forEach(el=>{if(el.tagName==='FIGURE'&&el.querySelector('.g2')&&el.querySelectorAll('.g2 > *').length>2){blocks.push(el)}else blocks.push(el)});
+    const blocks=[];$('#rep').querySelectorAll(':scope > header, :scope > section > *').forEach(el=>{const kids=el.tagName==='FIGURE'?[...el.children]:[];if(kids.length>2&&kids.filter(k=>k.classList.contains('ch')||k.tagName==='IMG').length>1){kids.forEach(k=>blocks.push(k))}else blocks.push(el)});
     for(let i=0;i<blocks.length;i++){const el=blocks[i];busy(true,`PDF 만드는 중… (${i+1}/${blocks.length})`);
       const c=await html2canvas(el,{scale:2,backgroundColor:'#ffffff',useCORS:true,logging:false});const hmm=c.height*W/c.width;
       const keepNext=/^H2$/.test(el.tagName);
