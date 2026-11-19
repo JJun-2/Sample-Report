@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>OxyFelt 조건 셋업 보고서 프로그램</title>
+<title>샘플 데이터 분석 프로그램</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -87,7 +87,7 @@ input.unsure{outline:2px solid #f39c12!important;background:#fff0d6!important}
 }
 </style></head><body>
 <div class="app">
-<div class="top"><div class="top1"><h1>OxyFelt 조건 셋업 보고서 프로그램</h1><span id="ver"></span><span id="saved"></span></div>
+<div class="top"><div class="top1"><h1>샘플 데이터 분석 프로그램</h1><span id="ver"></span><span id="saved"></span></div>
 <div id="log" hidden></div>
 <div class="acts"><button class="p" id="bPNG">🖼 이미지(PNG)로 저장</button><button class="p" id="bPDF">📄 PDF로 저장</button><button class="p" id="bPrint2">🖨 인쇄</button><span class="sep"></span>
 <button id="bSave">작업 파일 저장</button><label>작업 파일 열기<input type="file" id="fJson" accept=".json" hidden></label><label>엑셀 양식 불러오기<input type="file" id="fXlsx" accept=".xlsx,.xlsm" hidden></label><span class="sep"></span><button id="bEx">예시 데이터</button><button id="bNew">새로 시작</button></div>
@@ -163,7 +163,7 @@ function render(D){
   const act=(T.act||[]).filter(x=>x&&(x[0]||x[1]));
   const date=I.date?String(I.date).slice(0,10)+' · ':'';
   const cnt=(w,B)=>`${w} / ${B.pr.length}개 (${B.pr.length?Math.round(w/B.pr.length*100):0}%)`;
-  let h=`<header><img class="hlogo" src="${LOGO}" alt="(주)한부솔루션"><div class="tag">최종 보고 · 품질 분석</div><h1>${esc(I.prd||'OxyFelt')} 조건 셋업 결과 보고 (${esc(a.name)}·${esc(b.name)} 샘플)</h1>
+  let h=`<header><img class="hlogo" src="${LOGO}" alt="(주)한부솔루션"><div class="tag">최종 보고 · 품질 분석</div><h1>${I.prd?esc(I.prd)+' ':''}샘플 데이터 분석 결과 보고 (${esc(a.name)}·${esc(b.name)})</h1>
 <p class="meta">(주)한부솔루션 품질 · ${esc(date)}목표 <b>중량 ${f0(I.tg)} gsm / 두께 ${f1(I.tt)} t</b> · ${esc(a.name)} ${a.L}로트×${a.n}개, ${esc(b.name)} ${b.L}로트×${b.n}개${I.author?' · 작성자 '+esc(I.author):''}</p></header>
 <section class="exec"><h2>종합 요약</h2>
 <div class="verdict"><b class="k">결론</b>${T.verdict?esc(T.verdict):esc(autoVerdict)+'<span class="auto">※ 자동 생성 문구</span>'}</div>
@@ -315,8 +315,8 @@ function charts(A,S){
 }
 
 // ================= APP =================
-const APP_VERSION='1.8.0', APP_DATE='2026-11-19';
-const CHANGELOG=[['1.8.0','2026-11-20','이미지·PDF·인쇄 시 「자동 생성 문구」 안내 숨김, PDF·인쇄 2쪽부터 매 쪽 상단(로고 왼쪽)에 보고서 제목·목표 정보 머리글 반복'],['1.7.1','2026-11-20','PDF·인쇄 쪽 배치 개선: 장마다 새 쪽으로 넘기던 규칙 제거(부록만 새 쪽), 큰 그래프 묶음은 그래프 행 단위로 나눠 빈 공간 최소화'],['1.7.0','2026-11-20','회사 로고 추가(보고서 우측 상단, 인쇄·PDF 매 쪽 우측 상단), PDF·인쇄 시 제목과 표·그래프가 떨어지거나 잘리는 문제 수정(제목+내용 묶음, 긴 표는 행 단위로 나누고 머리행 반복)'],['1.6.0','2026-11-20','히트맵 4개를 한 화면(2×2)에 표시, 이미지·PDF 저장 속도 개선(한 번에 변환·재사용), 인쇄 기능 추가 및 A4 인쇄 레이아웃(섹션별 쪽 나눔, 표·그래프 잘림 방지, 쪽 번호) 적용'],['1.5.0','2026-11-20','보고서 글씨 크기 확대(임원 보고용), 로트별 평균 그래프 오차막대 잘림 수정, 히트맵 숫자 크게·색 대비 개선(두께 진한 색), 분포 비교에 자동 분석(CV·Cpk 해석) 추가, 용어 설명 표 추가'],['1.4.0','2026-11-19','첫 화면을 ① 기본 설정으로 변경, 밀도 허용범위(± g/cm³) 입력 추가 및 규격 이내 비율·Cpk·그래프 규격선 표시'],['1.3.0','2026-11-19','개별값 관리도를 차수·항목별 4개 그래프로 분리(선 겹침 해소, 선 이름·값 라벨 표시, 규격 범위 음영, 로트 단위 눈금), 사진 인식 기능 제거'],['1.2.0','2026-11-19','그래프 색 변경(목표 초록 점선·상한 빨강·하한 파랑), 표면 상태·웹 밀림 → 「특이사항」 칸으로 분리(항목 추가·삭제 가능)'],['1.1.0','2026-11-19','중량·두께 허용범위(규격) 입력 추가 및 규격 이내 비율·Cpk 표시, 밀도(g/cm³ = 중량/두께×0.001, 소수점 3자리) 표시, 주의사항·추가 점검 기준 입력 및 보고서 반영'],['1.0.0','2026-11-19','최초 배포: 시편 데이터 입력, 보고서 미리보기, PNG·PDF 내보내기, 엑셀 양식 불러오기, 작업 저장/불러오기']];
+const APP_VERSION='1.8.1', APP_DATE='2026-11-19';
+const CHANGELOG=[['1.8.1','2026-11-20','프로그램 이름을 「샘플 데이터 분석 프로그램」으로 변경, 보고서 제목을 「(제품명) 샘플 데이터 분석 결과 보고」로 변경'],['1.8.0','2026-11-20','이미지·PDF·인쇄 시 「자동 생성 문구」 안내 숨김, PDF·인쇄 2쪽부터 매 쪽 상단(로고 왼쪽)에 보고서 제목·목표 정보 머리글 반복'],['1.7.1','2026-11-20','PDF·인쇄 쪽 배치 개선: 장마다 새 쪽으로 넘기던 규칙 제거(부록만 새 쪽), 큰 그래프 묶음은 그래프 행 단위로 나눠 빈 공간 최소화'],['1.7.0','2026-11-20','회사 로고 추가(보고서 우측 상단, 인쇄·PDF 매 쪽 우측 상단), PDF·인쇄 시 제목과 표·그래프가 떨어지거나 잘리는 문제 수정(제목+내용 묶음, 긴 표는 행 단위로 나누고 머리행 반복)'],['1.6.0','2026-11-20','히트맵 4개를 한 화면(2×2)에 표시, 이미지·PDF 저장 속도 개선(한 번에 변환·재사용), 인쇄 기능 추가 및 A4 인쇄 레이아웃(섹션별 쪽 나눔, 표·그래프 잘림 방지, 쪽 번호) 적용'],['1.5.0','2026-11-20','보고서 글씨 크기 확대(임원 보고용), 로트별 평균 그래프 오차막대 잘림 수정, 히트맵 숫자 크게·색 대비 개선(두께 진한 색), 분포 비교에 자동 분석(CV·Cpk 해석) 추가, 용어 설명 표 추가'],['1.4.0','2026-11-19','첫 화면을 ① 기본 설정으로 변경, 밀도 허용범위(± g/cm³) 입력 추가 및 규격 이내 비율·Cpk·그래프 규격선 표시'],['1.3.0','2026-11-19','개별값 관리도를 차수·항목별 4개 그래프로 분리(선 겹침 해소, 선 이름·값 라벨 표시, 규격 범위 음영, 로트 단위 눈금), 사진 인식 기능 제거'],['1.2.0','2026-11-19','그래프 색 변경(목표 초록 점선·상한 빨강·하한 파랑), 표면 상태·웹 밀림 → 「특이사항」 칸으로 분리(항목 추가·삭제 가능)'],['1.1.0','2026-11-19','중량·두께 허용범위(규격) 입력 추가 및 규격 이내 비율·Cpk 표시, 밀도(g/cm³ = 중량/두께×0.001, 소수점 3자리) 표시, 주의사항·추가 점검 기준 입력 및 보고서 반영'],['1.0.0','2026-11-19','최초 배포: 시편 데이터 입력, 보고서 미리보기, PNG·PDF 내보내기, 엑셀 양식 불러오기, 작업 저장/불러오기']];
 const DEF=JSON.parse(document.getElementById('def').textContent);
 const KEY='oxyfelt-report-app-v1';
 function toGrid(list,L,n){const g=[],t=[];for(let l=0;l<L;l++){g.push([]);t.push([]);for(let p=0;p<n;p++){const x=list[l*n+p]||[null,null];g[l].push(x[0]);t[l].push(x[1])}}return{g,t}}
@@ -405,7 +405,7 @@ let dl=null;(async()=>{try{dl=window.claude&&window.claude.use?await window.clau
 async function saveFile(name,blob){
   if(dl){try{await dl.save({filename:name,data:blob});msg('저장했습니다: '+name)}catch(e){msg(e&&e.code==='declined'?'저장을 취소했습니다':'저장 실패: '+(e&&e.message||e))}return}
   try{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},2000);msg('저장했습니다: '+name)}catch(e){msg('이 화면에서는 다운로드가 차단되었습니다')}}
-const fname=ext=>`${(ST.info.prd||'OxyFelt').replace(/[\\/:*?"<>|]/g,'')}_조건셋업_보고서_${(ST.info.date||new Date().toISOString().slice(0,10))}.${ext}`;
+const fname=ext=>`${(ST.info.prd?ST.info.prd+'_':'').replace(/[\\/:*?"<>|]/g,'')}샘플데이터분석_보고서_${(ST.info.date||new Date().toISOString().slice(0,10))}.${ext}`;
 async function chartsToImages(root,scale=2){const ds=[...root.querySelectorAll('.js-plotly-plot')];const swaps=await Promise.all(ds.map(async d=>{try{const w=d.clientWidth,h=d.clientHeight;const url=await Plotly.toImage(d,{format:'png',scale,width:w,height:h});const img=new Image();img.src=url;img.className='chimg';img.style.width=w+'px';img.style.aspectRatio=w+'/'+h;await img.decode().catch(()=>{});return[d,img]}catch(e){return null}}));
   swaps.filter(Boolean).forEach(([d,img])=>{d.style.display='none';d.parentNode.insertBefore(img,d)});return()=>swaps.filter(Boolean).forEach(([d,img])=>{img.remove();d.style.display=''})}
 function busy(on,t){$('#busy').hidden=!on;if(t)$('#busyT').textContent=t}
