@@ -92,7 +92,7 @@ input.unsure{outline:2px solid #f39c12!important;background:#fff0d6!important}
 <div class="top"><div class="top1"><h1>샘플 데이터 분석 프로그램</h1><span id="ver"></span><span id="saved"></span></div>
 <div id="log" hidden></div>
 <div class="acts"><button class="p" id="bPNG">🖼 이미지(PNG)로 저장</button><button class="p" id="bPDF">📄 PDF로 저장</button><button class="p" id="bPrint2">🖨 인쇄</button><span class="sep"></span>
-<button id="bSave">작업 파일 저장</button><label>작업 파일 열기<input type="file" id="fJson" accept=".json" hidden></label><label>엑셀 양식 불러오기<input type="file" id="fXlsx" accept=".xlsx,.xlsm" hidden></label><span class="sep"></span><button id="bEx">예시 데이터</button><button id="bNew">새로 시작</button></div>
+<button id="bSave">작업 파일 저장</button><label>작업 파일 열기<input type="file" id="fJson" accept=".json" hidden></label><button id="bTpl">📥 엑셀 기본 양식 받기</button><label>엑셀 양식 불러오기<input type="file" id="fXlsx" accept=".xlsx,.xlsm" hidden></label><span class="sep"></span><button id="bEx">예시 데이터</button><button id="bNew">새로 시작</button></div>
 <div class="tabs"><button data-t="pSet">① 기본 설정</button><button data-t="pData">② 시편 데이터</button><button data-t="pText">③ 보고서 문구</button><button data-t="pPrev">④ 보고서 미리보기</button></div></div>
 <div class="pane" id="pSet" hidden></div><div class="pane" id="pData" hidden></div><div class="pane" id="pText" hidden></div>
 <div class="pane" id="pPrev" hidden><div class="wrap" id="rep"></div></div>
@@ -318,8 +318,8 @@ function charts(A,S){
 }
 
 // ================= APP =================
-const APP_VERSION='1.9.0', APP_DATE='2026-11-19';
-const CHANGELOG=[['1.9.0','2026-11-20','차수 추가·삭제 기능(최대 8개): 시료 수량 설정의 「＋ 차수 추가」 버튼, 보고서의 모든 표·그래프·분석이 차수 개수에 맞춰 자동 확장(비교·분석은 첫 차수 대비 마지막 차수 기준)'],['1.8.1','2026-11-20','프로그램 이름을 「샘플 데이터 분석 프로그램」으로 변경, 보고서 제목을 「(제품명) 샘플 데이터 분석 결과 보고」로 변경'],['1.8.0','2026-11-20','이미지·PDF·인쇄 시 「자동 생성 문구」 안내 숨김, PDF·인쇄 2쪽부터 매 쪽 상단(로고 왼쪽)에 보고서 제목·목표 정보 머리글 반복'],['1.7.1','2026-11-20','PDF·인쇄 쪽 배치 개선: 장마다 새 쪽으로 넘기던 규칙 제거(부록만 새 쪽), 큰 그래프 묶음은 그래프 행 단위로 나눠 빈 공간 최소화'],['1.7.0','2026-11-20','회사 로고 추가(보고서 우측 상단, 인쇄·PDF 매 쪽 우측 상단), PDF·인쇄 시 제목과 표·그래프가 떨어지거나 잘리는 문제 수정(제목+내용 묶음, 긴 표는 행 단위로 나누고 머리행 반복)'],['1.6.0','2026-11-20','히트맵 4개를 한 화면(2×2)에 표시, 이미지·PDF 저장 속도 개선(한 번에 변환·재사용), 인쇄 기능 추가 및 A4 인쇄 레이아웃(섹션별 쪽 나눔, 표·그래프 잘림 방지, 쪽 번호) 적용'],['1.5.0','2026-11-20','보고서 글씨 크기 확대(임원 보고용), 로트별 평균 그래프 오차막대 잘림 수정, 히트맵 숫자 크게·색 대비 개선(두께 진한 색), 분포 비교에 자동 분석(CV·Cpk 해석) 추가, 용어 설명 표 추가'],['1.4.0','2026-11-19','첫 화면을 ① 기본 설정으로 변경, 밀도 허용범위(± g/cm³) 입력 추가 및 규격 이내 비율·Cpk·그래프 규격선 표시'],['1.3.0','2026-11-19','개별값 관리도를 차수·항목별 4개 그래프로 분리(선 겹침 해소, 선 이름·값 라벨 표시, 규격 범위 음영, 로트 단위 눈금), 사진 인식 기능 제거'],['1.2.0','2026-11-19','그래프 색 변경(목표 초록 점선·상한 빨강·하한 파랑), 표면 상태·웹 밀림 → 「특이사항」 칸으로 분리(항목 추가·삭제 가능)'],['1.1.0','2026-11-19','중량·두께 허용범위(규격) 입력 추가 및 규격 이내 비율·Cpk 표시, 밀도(g/cm³ = 중량/두께×0.001, 소수점 3자리) 표시, 주의사항·추가 점검 기준 입력 및 보고서 반영'],['1.0.0','2026-11-19','최초 배포: 시편 데이터 입력, 보고서 미리보기, PNG·PDF 내보내기, 엑셀 양식 불러오기, 작업 저장/불러오기']];
+const APP_VERSION='1.10.0', APP_DATE='2026-11-19';
+const CHANGELOG=[['1.10.0','2026-11-20','「엑셀 기본 양식 받기」 버튼 추가: 현재 차수·로트·시편 설정대로 채워진 입력 양식(xlsx)을 내려받아 측정값을 입력한 뒤 [엑셀 양식 불러오기]로 올리면 자동 입력(차수 수·로트 수·시편 수도 파일 기준으로 자동 설정)'],['1.9.0','2026-11-20','차수 추가·삭제 기능(최대 8개): 시료 수량 설정의 「＋ 차수 추가」 버튼, 보고서의 모든 표·그래프·분석이 차수 개수에 맞춰 자동 확장(비교·분석은 첫 차수 대비 마지막 차수 기준)'],['1.8.1','2026-11-20','프로그램 이름을 「샘플 데이터 분석 프로그램」으로 변경, 보고서 제목을 「(제품명) 샘플 데이터 분석 결과 보고」로 변경'],['1.8.0','2026-11-20','이미지·PDF·인쇄 시 「자동 생성 문구」 안내 숨김, PDF·인쇄 2쪽부터 매 쪽 상단(로고 왼쪽)에 보고서 제목·목표 정보 머리글 반복'],['1.7.1','2026-11-20','PDF·인쇄 쪽 배치 개선: 장마다 새 쪽으로 넘기던 규칙 제거(부록만 새 쪽), 큰 그래프 묶음은 그래프 행 단위로 나눠 빈 공간 최소화'],['1.7.0','2026-11-20','회사 로고 추가(보고서 우측 상단, 인쇄·PDF 매 쪽 우측 상단), PDF·인쇄 시 제목과 표·그래프가 떨어지거나 잘리는 문제 수정(제목+내용 묶음, 긴 표는 행 단위로 나누고 머리행 반복)'],['1.6.0','2026-11-20','히트맵 4개를 한 화면(2×2)에 표시, 이미지·PDF 저장 속도 개선(한 번에 변환·재사용), 인쇄 기능 추가 및 A4 인쇄 레이아웃(섹션별 쪽 나눔, 표·그래프 잘림 방지, 쪽 번호) 적용'],['1.5.0','2026-11-20','보고서 글씨 크기 확대(임원 보고용), 로트별 평균 그래프 오차막대 잘림 수정, 히트맵 숫자 크게·색 대비 개선(두께 진한 색), 분포 비교에 자동 분석(CV·Cpk 해석) 추가, 용어 설명 표 추가'],['1.4.0','2026-11-19','첫 화면을 ① 기본 설정으로 변경, 밀도 허용범위(± g/cm³) 입력 추가 및 규격 이내 비율·Cpk·그래프 규격선 표시'],['1.3.0','2026-11-19','개별값 관리도를 차수·항목별 4개 그래프로 분리(선 겹침 해소, 선 이름·값 라벨 표시, 규격 범위 음영, 로트 단위 눈금), 사진 인식 기능 제거'],['1.2.0','2026-11-19','그래프 색 변경(목표 초록 점선·상한 빨강·하한 파랑), 표면 상태·웹 밀림 → 「특이사항」 칸으로 분리(항목 추가·삭제 가능)'],['1.1.0','2026-11-19','중량·두께 허용범위(규격) 입력 추가 및 규격 이내 비율·Cpk 표시, 밀도(g/cm³ = 중량/두께×0.001, 소수점 3자리) 표시, 주의사항·추가 점검 기준 입력 및 보고서 반영'],['1.0.0','2026-11-19','최초 배포: 시편 데이터 입력, 보고서 미리보기, PNG·PDF 내보내기, 엑셀 양식 불러오기, 작업 저장/불러오기']];
 const DEF=JSON.parse(document.getElementById('def').textContent);
 const KEY='oxyfelt-report-app-v1';
 function toGrid(list,L,n){const g=[],t=[];for(let l=0;l<L;l++){g.push([]);t.push([]);for(let p=0;p<n;p++){const x=list[l*n+p]||[null,null];g[l].push(x[0]);t[l].push(x[1])}}return{g,t}}
@@ -462,7 +462,42 @@ $('#bPNG').onclick=exportPNG;$('#bPDF').onclick=exportPDF;$('#bPrint2').onclick=
 // ---------- work file ----------
 $('#bSave').onclick=()=>saveFile(fname('json').replace('_보고서_','_작업_'),new Blob([JSON.stringify({app:'oxyfelt-report',ver:APP_VERSION,state:ST},null,1)],{type:'application/json'}));
 $('#fJson').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const o=JSON.parse(await f.text());if(!o.state)throw new Error('작업 파일 형식이 아닙니다');ST=o.state;ensureTexts();drawAll();autosave();msg('작업을 불러왔습니다: '+f.name)}catch(err){msg('불러오기 실패: '+err.message)}e.target.value=''};
-$('#fXlsx').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{if(!window.XLSX||!XLSX.read)throw new Error('엑셀 모듈을 불러오지 못했습니다');const D=readXlsx(new Uint8Array(await f.arrayBuffer()));const t=D.texts&&Object.keys(D.texts).length?D.texts:ST.texts;ST=fromD({...D,texts:t});ST.unsure=[[],[]];ensureTexts();drawAll();autosave();msg('엑셀을 불러왔습니다: '+f.name)}catch(err){msg('엑셀 불러오기 실패: '+err.message)}e.target.value=''};
+// ---------- 엑셀 기본 양식 (다운로드/업로드) ----------
+const TPL_INFO=[['제품명','prd'],['작성일','date'],['작성자','author'],['목표 중량 (gsm)','tg'],['목표 두께 (t)','tt'],['중량 허용범위 (± gsm)','gTol'],['두께 허용범위 (± t)','tTol'],['밀도 허용범위 (± g/cm³)','dTol']];
+async function downloadTpl(){if(!window.XLSX||!XLSX.utils)return msg('엑셀 모듈을 불러오지 못했습니다(인터넷 연결 확인)');
+  const wb=XLSX.utils.book_new();
+  const guide=[['샘플 데이터 분석 프로그램 — 시편 데이터 입력 양식'],[''],['사용 방법'],['1. 「시편데이터」 시트의 중량·두께 칸에 측정값을 입력합니다. (차수·로트·시편 번호는 현재 프로그램 설정대로 미리 채워져 있습니다)'],
+    ['2. 차수·로트·시편을 늘리거나 줄이려면 행을 추가·삭제하면 됩니다. 차수 이름(예: 1차, 2차, 3차)은 자유롭게 정할 수 있고, 위에서부터 처음 나오는 순서대로 차수가 정해집니다.'],
+    ['3. 「기본정보」 시트는 선택 사항입니다. 비워 두면 프로그램에 입력된 값을 그대로 씁니다.'],['4. 저장한 뒤 프로그램의 [엑셀 양식 불러오기] 버튼으로 이 파일을 올리면 데이터가 입력됩니다.'],[''],
+    ['주의: 시트 이름과 첫 줄(제목 행)은 바꾸지 마세요. 중량은 gsm, 두께는 mm(t) 단위 숫자로 입력합니다. 빈 칸은 미측정으로 처리됩니다.']];
+  const ws0=XLSX.utils.aoa_to_sheet(guide);ws0['!cols']=[{wch:120}];XLSX.utils.book_append_sheet(wb,ws0,'사용방법');
+  const rows=[['차수','로트','시편','중량 (gsm)','두께 (t)']];
+  ST.names.forEach((nm,b)=>{for(let l=0;l<ST.lots[b];l++)for(let p=0;p<ST.n[b];p++)rows.push([nm,l+1,p+1,null,null])});
+  const ws=XLSX.utils.aoa_to_sheet(rows);ws['!cols']=[{wch:10},{wch:7},{wch:7},{wch:13},{wch:11}];ws['!autofilter']={ref:`A1:E${rows.length}`};XLSX.utils.book_append_sheet(wb,ws,'시편데이터');
+  const info=[['항목','값'],...TPL_INFO.map(([l,k])=>[l,ST.info[k]??''])];const wi=XLSX.utils.aoa_to_sheet(info);wi['!cols']=[{wch:24},{wch:20}];XLSX.utils.book_append_sheet(wb,wi,'기본정보');
+  wb.Workbook={Views:[{activeTab:1}]};
+  const out=XLSX.write(wb,{type:'array',bookType:'xlsx'});await saveFile('시편데이터_입력양식.xlsx',new Blob([out],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}))}
+function parseTpl(wb){const ws=wb.Sheets['시편데이터'];const rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:'',raw:true});
+  const head=(rows[0]||[]).map(x=>String(x).replace(/\s/g,''));const ci=k=>head.findIndex(h=>h.startsWith(k));const cB=ci('차수'),cL=ci('로트'),cP=ci('시편'),cG=ci('중량'),cT=ci('두께');
+  if([cB,cL,cP,cG,cT].some(i=>i<0))throw new Error('「시편데이터」 시트의 첫 줄(차수·로트·시편·중량·두께)을 찾을 수 없습니다');
+  const order=[],map={};let bad=0,cnt=0;const num=v=>{if(v===''||v==null)return null;const x=+String(v).replace(',','.');return isFinite(x)?x:NaN};
+  rows.slice(1).forEach((r,i)=>{const nm=String(r[cB]??'').trim();if(!nm&&r.every(v=>v===''))return;const l=parseInt(r[cL]),p=parseInt(r[cP]);
+    if(!nm||!(l>=1)||!(p>=1)){bad++;return}if(!map[nm]){map[nm]={L:0,n:0,cells:[]};order.push(nm)}const g=num(r[cG]),t=num(r[cT]);if(Number.isNaN(g)||Number.isNaN(t)){bad++}
+    const B=map[nm];B.L=Math.max(B.L,l);B.n=Math.max(B.n,p);B.cells.push([l-1,p-1,Number.isNaN(g)?null:g,Number.isNaN(t)?null:t]);if(g!=null||t!=null)cnt++});
+  if(!order.length)throw new Error('「시편데이터」 시트에 데이터 행이 없습니다');if(order.length>8)throw new Error('차수는 최대 8개까지 불러올 수 있습니다');
+  const old=ST;const grid=order.map(nm=>{const B=map[nm];const g=Array.from({length:B.L},()=>Array(B.n).fill(null)),t=Array.from({length:B.L},()=>Array(B.n).fill(null));B.cells.forEach(([l,p,gv,tv])=>{g[l][p]=gv;t[l][p]=tv});return{g,t}});
+  const info={...old.info};const wi=wb.Sheets['기본정보'];if(wi){XLSX.utils.sheet_to_json(wi,{header:1,defval:''}).slice(1).forEach(([k,v])=>{const f=TPL_INFO.find(x=>x[0]===String(k).trim());if(!f||v===''||v==null)return;if(f[1]==='date'&&v instanceof Date)v=new Date(v.getTime()-v.getTimezoneOffset()*60000).toISOString().slice(0,10);info[f[1]]=['prd','date','author'].includes(f[1])?String(v):+v})}
+  const memos=order.map(nm=>{const j=old.names.indexOf(nm);return j>=0?(old.memos[j]||''):''});
+  const remap=arr=>order.map(nm=>{const j=old.names.indexOf(nm);return j>=0?(arr[j]||''):''});
+  old.checks.forEach(c=>c.r=remap(c.r));(old.texts.notes||[]).forEach(x=>x.r=remap(x.r));
+  ST={...old,names:order,lots:order.map(nm=>map[nm].L),n:order.map(nm=>map[nm].n),grid,info,memos,unsure:order.map(()=>[])};
+  return{cnt,bad,desc:order.map(nm=>`${nm} ${map[nm].L}로트×${map[nm].n}개`).join(', ')}}
+$('#bTpl').onclick=downloadTpl;
+$('#fXlsx').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{if(!window.XLSX||!XLSX.read)throw new Error('엑셀 모듈을 불러오지 못했습니다');const buf=new Uint8Array(await f.arrayBuffer());
+  const wb=XLSX.read(buf,{type:'array',cellDates:true});
+  if(wb.Sheets['시편데이터']){const r=parseTpl(wb);ensureTexts();drawAll();autosave();curB=0;tab('pData');msg(`불러왔습니다: ${r.desc} (측정값 ${r.cnt}개${r.bad?`, 확인 필요 ${r.bad}행`:''})`)}
+  else{const D=readXlsx(buf);const t=D.texts&&Object.keys(D.texts).length?D.texts:ST.texts;ST=fromD({...D,texts:t});ST.unsure=[[],[]];ensureTexts();drawAll();autosave();msg('엑셀을 불러왔습니다: '+f.name)}}
+  catch(err){msg('엑셀 불러오기 실패: '+err.message)}e.target.value=''};
 $('#bNew').onclick=()=>{const x=$('#bNew');if(!x.dataset.ok){x.dataset.ok=1;x.textContent='정말 새로 시작? 한 번 더';setTimeout(()=>{delete x.dataset.ok;x.textContent='새로 시작'},3000);return}
   ST={names:['1차','2차'],lots:[5,5],n:[10,10],info:{prd:'',date:new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,10),author:'',tg:ST.info.tg,tt:ST.info.tt,gTol:ST.info.gTol,tTol:ST.info.tTol,dTol:ST.info.dTol},memos:['',''],grid:[0,1].map(()=>({g:Array.from({length:5},()=>Array(10).fill(null)),t:Array.from({length:5},()=>Array(10).fill(null))})),texts:{},checks:ST.checks.map(c=>({item:c.item,std:c.std,r:['',''],judge:''})),caution:ST.caution,unsure:[[],[]]};ensureTexts();drawAll();autosave();delete x.dataset.ok;x.textContent='새로 시작';msg('빈 양식으로 시작합니다(목표값은 유지)')};
 $('#bEx').onclick=()=>{ST=fromD(DEF);ST.unsure=[[],[]];ensureTexts();drawAll();autosave();msg('예시 데이터를 불러왔습니다')};
